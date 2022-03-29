@@ -1,0 +1,83 @@
+ROOM
+3,3,1,Entrance to a large dungeon
+P,0,0
+0,0,0
+0,E1,0
+NPC
+R
+R
+NPC
+R
+R
+ROOM
+7,7,0,A large room with 2 enemies
+TR,0,0,0,E1,0,0
+0,0,0,0,0,0,0
+0,O,0,O,O,O,O
+0,O,0,0,0,I1,E2
+0,0,O,TR,0,0,0
+TR,0,O,O,O,0,0
+0,0,0,0,0,0,I2
+NPC
+R
+R
+ROOM
+5,5,0,A medium sized room with 1 enemy
+0,0,TR,0,E4
+E2,O,0,0,0
+0,O,O,0,0
+0,0,0,0,TR
+I1,0,E3,0,0
+CHEST
+R
+ROOM
+4,4,0,A small room with a chest
+0,E3,0,TR
+0,0,O,0
+0,O,O,0
+0,0,0,I1
+NPC
+R
+R
+NPC
+R
+R
+ROOM
+6,6,0,A very large room with 2 enemies
+0,E6,0,0,0,I2
+0,0,T8,O,0,0
+0,O,O,O,0,E5
+0,O,O,O,0,0
+0,0,0,0,0,I1
+0,0,0,E4,0,0
+CHEST
+R
+CHEST
+R
+NPC
+R
+R
+ROOM
+5,5,0,A medium sized room with 2 chests and an enemy
+T4,I1,O,I2,0
+0,0,O,0,0
+0,O,O,O,0
+0,0,0,0,0
+0,0,E6,0,I3
+ROOM
+5,5,0,An empty medium sized room
+0,0,0,0,0
+E5,0,TR,0,0
+O,O,O,O,0
+0,O,0,0,0
+0,0,E7,0,0
+NPC
+God,A huge figure against the wall,150,15,10,true
+E.thunderbolt.DUNK FOR THE THROAT.10000.0.50.0.1
+ROOM
+5,5,2,A scary room with a big enemy
+0,O,E7,O,0
+0,O,0,O,0
+O,O,0,O,O
+0,0,0,0,0
+0,O,I1,O,0

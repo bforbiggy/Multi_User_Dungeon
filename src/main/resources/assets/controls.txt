@@ -1,0 +1,17 @@
+Basic Commands:
+Move           | 'W' 'A' 'S' 'D'
+Attack         | 'Attack X Y'
+Inventory      | 'I'
+View Loot/Loot | 'L (bagNumber itemNumber)'
+Use exit       | 'EXIT'
+Return to room | 'R'
+
+Inventory Commands:
+Open Inventory | 'I'
+Equip Item     | 'Equip bagNumber itemNumber'
+Unequip Item   | 'Unequip equipmentType'
+Swap Bag       | 'Swap oldBagNumber bagLocation newBagLocation'
+Destroy Item   | 'Destroy bagNumber itemNumber'
+
+Misc Commands:
+Finish (At End)| 'F'

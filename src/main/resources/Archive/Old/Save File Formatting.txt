@@ -1,0 +1,99 @@
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+ENTITY/FILE FILE FORMATTING
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+[Player formatting]
+name, description, health, attack, defense
+bagItem1, bagItem2, bagItem3....., bagItem6
+item1, item2, item3, item4....
+item23, item24....
+item193, item194, item195...
+
+[NPC formatting]
+NPC Format: name-description-health-attack-defense
+NPC Format (With items): name-description-health-attack-defense-item1-item2-item2-item4.........
+
+[Item formatting]
+itemType{B = Bag, C = Consumable, E = Equippable, I = Item}
+equipType{0 = armor, 1 = weapon}
+
+Random Item Format: itemType
+Normal Items: itemType.name.description.value
+Equippable Items: itemType.name.description.value.health.attack.defense.equipType
+Consumable Items: itemType.name.description.value.health.attack.defense.duration
+Bag Items: itemType.name.description.value.capacity 
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+ROOM FILE FORMATTING
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+[Tile formatting]
+tileType{0 = Tile, N = NPC, C = Chest, T = Trap, E = Exit, O = Obstacle, P = Player}
+
+Blank/Obstacle Tile: T/O
+NPC Tile: N|NPCFORMAT (Put R in place of NPC format for random)
+Chest Tile: C|item1-item2-item3..... (Put R as first item for random)
+Trap Tile: T|attack (Put R as attack for random)
+Exit Tile: E|exitID
+Player Tile: P|saveFile.save
+
+
+[Room Formatting]
+roomType{0 = default, 1 = entrance, 2 = exit}
+
+Room height, Room width, Room Type, Room description
+Tile data,Tile data,Tile data
+Tile data,Tile data,Tile data
+Tile data,Tile data,Tile data
+Tile data,Tile data,Tile data
+
+
+!! SAMPLE FILE !!
+3,3,1,Entrance to a large dungeon
+P,0,0
+0,0,0
+0,E|1,0
+7,7,0,A large room with 2 enemies
+T|R,0,0,0,E|1,0,0
+0,0,0,0,0,0,0
+0,O,0,O,O,O,O
+0,O,0,0,0,N|R,E|2
+0,0,O,T|R,0,0,0
+T|R,0,O,O,O,0,0
+0,0,0,0,0,0,N|R
+5,5,0,A medium sized room with 1 enemy
+0,0,T|R,0,E|4,
+E|2,O,0,0,0,
+0,O,O,0,0,
+0,0,0,0,T|R,
+N|R,0,E|3,0,0
+4,4,0,A small room with a chest
+0,E|3,0,T|R,
+0,0,O,0,
+0,O,O,0,
+0,0,0,C|R
+6,6,0,A very large room with 2 enemies
+0,E|6,0,0,0,N|R,
+0,0,T|8,O,0,0,
+0,O,O,O,0,E|5,
+0,O,O,O,0,0,
+0,0,0,0,0,N|R,
+0,0,0,E|4,0,0
+5,5,0,A medium sized room with 2 chests and an enemy
+T|4,C|R,O,C|R,0
+0,0,O,0,0
+0,O,O,O,0
+0,0,0,0,0
+0,0,E|6,0,N|R
+5,5,0,An empty medium sized room
+0,0,0,0,0
+E|5,0,T|R,0,0
+O,O,O,O,0
+0,O,0,0,0
+0,0,E|7,0,0
+5,5,2,A scary room with a big enemy
+God,A huge figure against the wall,150,15,10,1
+0,O,E|7,O,0
+0,O,0,O,0
+O,O,0,O,O
+0,0,0,0,0
+0,O,N|God-A huge figure against the wall-150-15-10-1,O,0

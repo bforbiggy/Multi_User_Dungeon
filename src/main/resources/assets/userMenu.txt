@@ -1,0 +1,4 @@
+Welcome to MUD!
+Type "maps" to view maps, then "start mapId" to play the map.
+If you have saved previously, type "continue" to continue.
+(You can also type "endless" to start/join the endless adventure!)

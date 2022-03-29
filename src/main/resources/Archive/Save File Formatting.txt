@@ -1,0 +1,50 @@
+[!!! GUIDE !!!]
+Before creating a room, you must predefine "high memory" objects (such as chests or NPCs).
+You do this by listing these objects before the room following formatting.
+Then you can construct the room using the room format, with I5 referring to the 5th high memory object.
+
+[Item Formats]
+itemType{B = Bag, C = Consumable, E = Equippable, I = Item}
+equipType{0 = armor, 1 = weapon}
+
+Random Item Format: itemType
+Normal Items: itemType.name.description.value
+Equippable Items: itemType.name.description.value.health.attack.defense.equipType
+Consumable Items: itemType.name.description.value.health.attack.defense.duration
+Bag Items: itemType.name.description.value.capacity 
+
+[Object Format Examples]
+CHEST
+item1,item2,item3,item4
+CHEST
+R
+NPC
+God,A huge figure against the wall,150,15,10,1,true
+E.awesome weapon of programming.I sure do hope this weapon of programming doesn't debuff me like crazy!.11.7.2.2.1
+NPC
+R
+R
+
+[Tile Formatting]
+Blank Tile: 0
+Obstacle Tile: O
+NPC/Chest Tile: Iindex (I5)
+Trap Tile: Tattack (ex. T100 OR TR)
+Exit Tile: Eid (ex. E5)
+Player Tile: P
+
+[Room Formatting roomType:0 = default, 1 = entrance, 2 = exit]
+ROOM
+Room height, Room width, Room Type, Room description
+Tile data,Tile data,Tile data
+Tile data,Tile data,Tile data
+Tile data,Tile data,Tile data
+Tile data,Tile data,Tile data
+
+[Player formatting]
+name,description health,attack,defense
+equipment1,equipment2,equipment3,equipment4
+bagItem1,bagItem2,bagItem3.....,bagItem6
+item1,item2,item3,item4....
+item23,item24....
+item193,item194,item195...

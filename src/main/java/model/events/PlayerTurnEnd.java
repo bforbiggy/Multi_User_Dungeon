@@ -1,0 +1,50 @@
+package model.events;
+
+import java.util.ArrayList;
+import java.util.Stack;
+
+import model.Game;
+
+public class PlayerTurnEnd
+{
+    private Game game;
+    public ArrayList<PlayerTurnEndListener> listeners = new ArrayList<PlayerTurnEndListener>();
+    public Stack<PlayerTurnEndListener> removeTargets = new Stack<PlayerTurnEndListener>();
+
+    public PlayerTurnEnd(Game game)
+    {
+        this.game = game;
+    }
+
+    public Game getGame(){
+        return game;
+    }
+
+    public void addListener(PlayerTurnEndListener listener){
+        listeners.add(listener);
+    }
+
+    public void removeListener(PlayerTurnEndListener listener){
+        listeners.remove(listener);
+    }
+
+    public void scheduleRemoveListener(PlayerTurnEndListener listener){
+        removeTargets.push(listener);
+    }
+
+    public void removeScheduled(){
+        while(!removeTargets.empty())
+            listeners.remove(removeTargets.pop());
+    }
+
+    public void removeAllListeners(){
+        listeners.clear();
+    }
+
+    public void notifyAllListeners()
+    {
+        for(PlayerTurnEndListener listener : listeners)
+            listener.onPlayerTurnEnd(this);
+        removeScheduled();
+    }
+}

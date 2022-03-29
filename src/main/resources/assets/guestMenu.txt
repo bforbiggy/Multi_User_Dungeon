@@ -1,0 +1,6 @@
+Welcome to MUD!
+To login, enter "login USERNAME PASSWORD".
+To register, enter "register USERNAME PASSWORD".
+
+Otherwise, you can type maps to view maps.
+To view a map, type start followed by the map id.
