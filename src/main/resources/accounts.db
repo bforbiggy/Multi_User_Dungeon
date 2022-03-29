@@ -1,11 +1,16 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <accounts>
     <account password="hotdoggio" username="testest"/>
+    <account password="test" username="test">
+        <GAMES_PLAYED>1</GAMES_PLAYED>
+        <LIVES_LOST>1</LIVES_LOST>
+    </account>
+    <account password="mouth" username="balls"/>
     <account password="9h9hg9eh" username="lol"/>
     <account password="password" username="admin"/>
     <account password="pass" username="user">
-        <LIVES_LOST>1</LIVES_LOST>
         <GAMES_PLAYED>1</GAMES_PLAYED>
+        <LIVES_LOST>1</LIVES_LOST>
     </account>
     <account password="megazamn123" username="dabiggy"/>
     <account password="password" username="username"/>

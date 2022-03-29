@@ -86,7 +86,6 @@ public class Game implements PlayerTurnEndListener {
             playerTurnEnd.removeListener(npc);
 
         // Add new room and its npcs to appropriate events
-        map.currRoom = newRoom;
         playerTurnEnd.addListener(newRoom);
         for (NPC npc : newRoom.getNPCs()) {
             dayCycle.addListener(npc);
@@ -109,7 +108,6 @@ public class Game implements PlayerTurnEndListener {
             map.entityUseExit(player, exit);
             return true;
         }
-
         return false;
     }
 

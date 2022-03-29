@@ -98,8 +98,8 @@ public class EndlessGame extends Game {
                 }
             }
 
-            map.entityUseExit(player, exit);
             roomChange(exit.getOtherRoom());
+            map.entityUseExit(player, exit);
             return true;
         }
 

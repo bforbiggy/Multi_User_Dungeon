@@ -11,7 +11,7 @@ public class Room implements PlayerTurnEndListener{
     private static final String[] ROOM_TYPES = {"library", "closet", "hall", "bedroom", "cave", "ruin"};
     public HashMap<Direction, Tile> neighbors = new HashMap<Direction, Tile>(4);
 
-    private Tile tiles[][];
+    private Tile[][] tiles;
     private int height;
     private int width;
 
@@ -54,9 +54,8 @@ public class Room implements PlayerTurnEndListener{
         Tile tile = getTileAtLocation(location);
         tile.occupant = occupant;
 
-        if(occupant instanceof Entity)
+        if(occupant instanceof Entity entity)
         {
-            Entity entity = (Entity)occupant;
             entity.setLocation(location);
         }
     }
@@ -109,13 +108,10 @@ public class Room implements PlayerTurnEndListener{
                 int x = playerLoc.getX() + xOffset;
                 int y = playerLoc.getY() + yOffset;
 
-                Location loc = new Location(x, y);
-                if(!(inBounds(loc))) continue;
-
-                Tile tile = getTileAtLocation(loc);
+                Tile tile = getTileAtLocation(new Location(x, y));
 
                 // Trigger trap/Detect trap
-                if(tile.content instanceof Trap trap)
+                if(tile != null && tile.content instanceof Trap trap)
                 {
                     // Ignore disabled traps
                     if(trap.getDisabled()) 
@@ -134,13 +130,11 @@ public class Room implements PlayerTurnEndListener{
      * @return list of all npcs
      */
     public ArrayList<NPC> getNPCs(){
-        ArrayList<NPC> npcs = new ArrayList<>();
+        ArrayList<NPC> npcs = new ArrayList<NPC>();
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
                 Tile tile = tiles[y][x];
                 if(tile.occupant instanceof NPC npc)
-                    npcs.add(npc);
-                else if(tile.content instanceof NPC npc)
                     npcs.add(npc);
             }
         }

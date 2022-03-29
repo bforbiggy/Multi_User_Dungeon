@@ -124,7 +124,9 @@ public class MapGenerator {
                         double objectType = randy.nextDouble();
                         // Place NPC
                         if (objectType <= 0.3) {
-                            tile.setOccupant(NPC.generateNPC());
+                            NPC npc = NPC.generateNPC();
+                            npc.setLocation(tile.getLocation());
+                            tile.setOccupant(npc);
                         }
                         // Place Chest
                         else if (objectType <= 0.45) {

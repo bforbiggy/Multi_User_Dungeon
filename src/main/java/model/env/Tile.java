@@ -23,6 +23,7 @@ public class Tile {
      */
     public void forceAdd(Object obj)
     {
+        //TODO: Consider just keeping this in csvloader..
         if(obj instanceof Entity entity)
         {
             if(entity.isDead() || entity instanceof Merchant)

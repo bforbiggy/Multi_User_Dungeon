@@ -88,7 +88,7 @@ public class AccountService {
             NodeList list = doc.getElementsByTagName("account");
             for (int i = 0; i < list.getLength(); i++) {
                 Node accountNode = list.item(i);
-                if (list.item(i) instanceof Element accountElem) {
+                if (accountNode instanceof Element accountElem) {
 
                     // Parse account username + pass
                     String username = accountElem.getAttribute("username");
@@ -97,12 +97,11 @@ public class AccountService {
                     // Parse account statistics
                     EnumMap<AccountStat, Integer> accountStats = new EnumMap<AccountStat, Integer>(AccountStat.class);
                     NodeList statNodes = accountElem.getChildNodes();
-                    for (int j = 0; j <= statNodes.getLength(); j++) {
+                    for (int j = 0; j < statNodes.getLength(); j++) {
                         Node statNode = statNodes.item(j);
                         if(statNode.getNodeType() == Node.ELEMENT_NODE)
                         {
                             AccountStat stat = AccountStat.stringToEnum(statNode.getNodeName());
-                            System.out.println(statNode.getNodeName());
                             Integer val = Integer.parseInt(statNode.getTextContent());
                             accountStats.put(stat, val);
                         }

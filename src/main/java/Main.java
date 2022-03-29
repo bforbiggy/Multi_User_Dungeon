@@ -2,9 +2,6 @@
 import controller.*;
 
 public class Main {
-    public static final String MAP_SAVE_LOCATION = "src/main/resources/map.save";
-    public static final String PLAYER_SAVE_LOCATION = "src/main/resources/player.save";
-
     public static void main(String[] args) {
         MenuController mainController = new MenuController();
         Controller controller = null;

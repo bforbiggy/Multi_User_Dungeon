@@ -56,10 +56,12 @@ public class MenuController extends Controller {
                 System.out.println("Invalid username/password combination!");
             }
         } else if (tokens[0].equals("REGISTER") && tokens.length >= 2) {
-            if (!accountService.isNameTaken(tokens[1])) {
-                account = new Account(tokens[0], tokens[1]);
-                if (accountService.addAccount(account))
-                    accountService.save(FileConstants.ACCOUNT_PATH);
+            account = new Account(tokens[1], tokens[2]);
+            if(accountService.addAccount(account)){
+                accountService.save(FileConstants.ACCOUNT_PATH);
+            }
+            else{
+                account = null;
             }
         } else if (tokens[0].equals("HISTORY") && account != null) {
             System.out.println("[Player History]");
