@@ -22,7 +22,7 @@ public class AccountService {
 
     public boolean addAccount(String username, String password) {
         if (!accounts.containsKey(username)) {
-            Account account = new Account(username, password, new EnumMap<AccountStat, Integer>(AccountStat.class));
+            Account account = new Account(username, password);
             accounts.put(username, account);
             return true;
         }
@@ -60,7 +60,7 @@ public class AccountService {
 
                 // Create each element for account statistic
                 for (AccountStat stat : account.getKeySet()) {
-                    Element statElem = document.createElement(AccountStat.enumToString(stat));
+                    Element statElem = document.createElement(stat.name());
                     statElem.setTextContent(account.getData(stat).toString());
                     accountElem.appendChild(statElem);
                 }
@@ -101,7 +101,7 @@ public class AccountService {
                         Node statNode = statNodes.item(j);
                         if(statNode.getNodeType() == Node.ELEMENT_NODE)
                         {
-                            AccountStat stat = AccountStat.stringToEnum(statNode.getNodeName());
+                            AccountStat stat = AccountStat.valueOf(statNode.getNodeName());
                             Integer val = Integer.parseInt(statNode.getTextContent());
                             accountStats.put(stat, val);
                         }

@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import model.entities.*;
 import model.env.*;
 import model.items.*;
-import model.items.Equippable.Equip_Tag;
 import persistence.FileConstants;
 
 public class CSVSaver {
@@ -26,14 +25,11 @@ public class CSVSaver {
     }
 
     /**
-     * Given an item, converts it to the following loadable formats (depending on
-     * item type)
-     * Normal Items: itemType.name.description.value
-     * Equippable Items:
-     * itemType.name.description.value.health.attack.defense.equipType
-     * Consumable Items:
-     * itemType.name.description.value.health.attack.defense.duration
-     * Bag Items: itemType.name.description.value.capacity
+     * Given an item, converts it to the following loadable formats (depending on item type) Normal
+     * Items: itemType.name.description.value Equippable Items:
+     * itemType.name.description.value.health.attack.defense.equipType Consumable Items:
+     * itemType.name.description.value.health.attack.defense.duration Bag Items:
+     * itemType.name.description.value.capacity
      * 
      * @param item item to convert to string
      * @return loadable string representation of item
@@ -43,30 +39,27 @@ public class CSVSaver {
         tokens.add(item.getName());
         tokens.add(item.getDescription());
         tokens.add(Integer.toString(item.getValue()));
-        if (item instanceof Bag) {
+        if (item instanceof Bag bag) {
             tokens.add(0, "B");
-            Bag bag = (Bag) item;
             tokens.add(Integer.toString(bag.getCapacity()));
-        } else if (item instanceof Equippable) {
+        }
+        else if (item instanceof Equippable equippable) {
             tokens.add(0, "E");
-            Equippable equippable = (Equippable) item;
             tokens.addAll(statsToString(equippable.getStats()));
-            for (int i = 0; i < Equip_Tag.tags.length; i++)
-                if (Equip_Tag.tags[i] == equippable.getEquipTag())
-                    tokens.add(Integer.toString(i));
-        } else if (item instanceof Consumable) {
+            tokens.add(equippable.getEquipTag().name());
+        }
+        else if (item instanceof Consumable consumable) {
             tokens.add(0, "C");
-            Consumable consumable = (Consumable) item;
             tokens.addAll(statsToString(consumable.getStats()));
             tokens.add(Integer.toString(consumable.getDuration()));
-        } else
+        }
+        else
             tokens.add(0, "I");
         return String.join(FileConstants.PERIOD, tokens);
     }
 
     /**
-     * Given an inventory, convert it to the following format:
-     * item1,item2,item3,item4....
+     * Given an inventory, convert it to the following format: item1,item2,item3,item4....
      * 
      * @param inventory inventory to convert to string
      * @return string representation of inventory
@@ -84,8 +77,7 @@ public class CSVSaver {
 
     /**
      * Given an npc, convert it to the following loadable format:
-     * name,description,health,attack,defense,isDiurnal
-     * item1, item2, item3, item4
+     * name,description,health,attack,defense,isDiurnal item1, item2, item3, item4
      * 
      * @param npc npc to convert to string
      * @return string representation of npc
@@ -105,8 +97,7 @@ public class CSVSaver {
 
     /**
      * Given a merchant, convert it to the following loadable format:
-     * name,description,health,attack,defense
-     * item1, item2, item3, item4
+     * name,description,health,attack,defense item1, item2, item3, item4
      * 
      * @param merchant merchant to convert to string
      * @return string representation of merchant
@@ -127,14 +118,11 @@ public class CSVSaver {
     }
 
     /**
-     * Given a player, save the player to the output path.
-     * The player is formatted as follows:
-     * name,description health,attack,defense
-     * equipment1,equipment2,equipment3,equipment4
-     * bagItem1,bagItem2,bagItem3.....,bagItem6
-     * item1,item2,item3,item4....
+     * Given a player, save the player to the output path. The player is formatted as follows:
+     * name,description health,attack,defense equipment1,equipment2,equipment3,equipment4
+     * bagItem1,bagItem2,bagItem3.....,bagItem6 item1,item2,item3,item4....
      * 
-     * @param player     player to convert to string
+     * @param player player to convert to string
      * @param outputPath path to save file to
      */
     public static void savePlayer(Player player, String outputPath) {
@@ -153,8 +141,9 @@ public class CSVSaver {
 
             // Player stats
             Stats stats = player.getStats();
-            String[] playerData = { player.getName(), player.getDescription(), Integer.toString(stats.health),
-                    Integer.toString(stats.attack), Integer.toString(stats.defense) };
+            String[] playerData = {player.getName(), player.getDescription(), Integer.toString(
+                    stats.health),
+                    Integer.toString(stats.attack), Integer.toString(stats.defense)};
 
             // Get all player bags and items
             ArrayList<String> bags = new ArrayList<String>();
@@ -178,26 +167,20 @@ public class CSVSaver {
     }
 
     /**
-     * Given a tile, converts its contents according to the below formats.
-     * If the content contains a "heavy data" object (ex. NPC or Chest),
-     * the object is also added to a runningList, with a Iindex replacing said
-     * object.
-     * (A | is used if a tile contains more than one object)
+     * Given a tile, converts its contents according to the below formats. If the content contains a
+     * "heavy data" object (ex. NPC or Chest), the object is also added to a runningList, with a
+     * Iindex replacing said object. (A | is used if a tile contains more than one object)
      * 
-     * Blank Tile: 0
-     * Obstacle Tile: O
-     * NPC/Chest Tile: Iindex (ex. I5)
-     * Trap Tile: Tattack (ex. T100 OR TR)
-     * Exit Tile: Eid (ex. E5)
-     * Player Tile: P
+     * Blank Tile: 0 Obstacle Tile: O NPC/Chest Tile: Iindex (ex. I5) Trap Tile: Tattack (ex. T100
+     * OR TR) Exit Tile: Eid (ex. E5) Player Tile: P
      * 
-     * @param tile        tile to convert to string
+     * @param tile tile to convert to string
      * @param runningList list to add each heavy data object to
      * @return string representation of tile
      */
     public static String tileToString(Tile tile, ArrayList<Object> runningList) {
         ArrayList<String> objectStrings = new ArrayList<String>();
-        for (Object tileData : new Object[] { tile.content, tile.occupant }) {
+        for (Object tileData : new Object[] {tile.content, tile.occupant}) {
             if (tileData instanceof Obstacle)
                 objectStrings.add("O");
             else if (tileData instanceof Trap trap)
@@ -206,7 +189,8 @@ public class CSVSaver {
                 objectStrings.add("E" + exit.getId());
             else if (tileData instanceof Player)
                 objectStrings.add("P");
-            else if (tileData instanceof Chest || tileData instanceof NPC) {
+            else if (tileData instanceof Chest || tileData instanceof NPC ||
+                    tileData instanceof Merchant) {
                 runningList.add(tileData);
                 objectStrings.add("I" + runningList.size());
             }
@@ -217,12 +201,9 @@ public class CSVSaver {
     }
 
     /**
-     * Given a room, convert it into the following room format:
-     * Room height, Room width, Room Type, Room description
-     * Tile data,Tile data,Tile data
-     * Tile data,Tile data,Tile data
-     * Tile data,Tile data,Tile data
-     * Tile data,Tile data,Tile data
+     * Given a room, convert it into the following room format: Room height, Room width, Room Type,
+     * Room description Tile data,Tile data,Tile data Tile data,Tile data,Tile data Tile data,Tile
+     * data,Tile data Tile data,Tile data,Tile data
      * 
      * @param room room to convert to string
      * @return string representation of room
@@ -232,7 +213,8 @@ public class CSVSaver {
         ArrayList<Object> storedObjects = new ArrayList<Object>();
 
         // Convert all tiles into string
-        String roomString = String.format("ROOM\n%d,%d,%d,%s\n", room.getHeight(), room.getWidth(), room.getType(),
+        String roomString = String.format("ROOM%n%d,%d,%d,%s%n", room.getHeight(), room.getWidth(),
+                room.getType(),
                 room.getDesc());
         for (int h = 0; h < tiles[0].length; h++) {
             for (int w = 0; w < tiles[0].length; w++) {
@@ -251,10 +233,12 @@ public class CSVSaver {
             if (obj instanceof NPC npc) {
                 objectsString += "NPC\n";
                 objectsString += npcToString(npc) + "\n";
-            } else if (obj instanceof Chest chest) {
+            }
+            else if (obj instanceof Chest chest) {
                 objectsString += "CHEST\n";
                 objectsString += invToString(chest.getInventory()) + "\n";
-            } else if (obj instanceof Merchant merchant) {
+            }
+            else if (obj instanceof Merchant merchant) {
                 objectsString += "MERCHANT\n";
                 objectsString += merchantToString(merchant) + "\n";
             }
@@ -264,8 +248,7 @@ public class CSVSaver {
     }
 
     /**
-     * Given a map, save the map to the output path.
-     * Each heavy data object is prefixed by its type.
+     * Given a map, save the map to the output path. Each heavy data object is prefixed by its type.
      * (ex. ROOM, CHEST, NPC)
      * 
      * @param map

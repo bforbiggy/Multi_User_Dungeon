@@ -5,7 +5,6 @@ import java.util.HashMap;
 
 import model.entities.Entity;
 import model.events.PlayerTurnEnd;
-import model.items.Equippable.Equip_Tag;
 
 public class Inventory 
 {
@@ -14,7 +13,7 @@ public class Inventory
     public int gold = 0;
     private int capacity;
     public ArrayList<Bag> bags = new ArrayList<Bag>();
-    public HashMap<Equip_Tag, Equippable> equipment = new HashMap<Equip_Tag, Equippable>();
+    public HashMap<EquipTag, Equippable> equipment = new HashMap<EquipTag, Equippable>();
 
     public Inventory(int capacity){
         this.capacity = capacity;
@@ -153,7 +152,7 @@ public class Inventory
      * @param target the target the item is being unequipped from
      * @param item item to attempt to equip to target
      */
-    public Equippable unequipItem(Entity target, Equip_Tag tag)
+    public Equippable unequipItem(Entity target, EquipTag tag)
     {
         Equippable removed = equipment.remove(tag);
         if(removed != null) 

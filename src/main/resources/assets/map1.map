@@ -76,7 +76,7 @@ O,O,O,O,0
 0,0,E7,0,0
 NPC
 God,A huge figure against the wall,150,15,10,true
-E.thunderbolt.DUNK FOR THE THROAT.10000.0.50.0.1
+E.thunderbolt.DUNK FOR THE THROAT.10000.0.50.0.WEAPON
 ROOM
 5,5,2,A scary room with a big enemy
 0,O,E7,O,0

@@ -10,21 +10,21 @@ import javax.xml.transform.stream.StreamResult;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import model.Game;
 import model.entities.*;
+import model.env.Map;
+import model.env.Room;
 import model.items.*;
-import model.items.Equippable.Equip_Tag;
 
 public class XMLSaver {
-    public static Element createElemWithText(Document document, String tagName, String data)
-    {
+    public static Element createElemWithText(Document document, String tagName, String data) {
         Element elem = document.createElement(tagName);
         elem.appendChild(document.createTextNode(data));
         return elem;
     }
 
     // Converts stats to element
-    public static Element statsToElement(Document document, Stats stats)
-    {
+    public static Element statsToElement(Document document, Stats stats) {
         Element statElem = document.createElement("stats");
         statElem.appendChild(createElemWithText(document, "health", Integer.toString(stats.health)));
         statElem.appendChild(createElemWithText(document, "attack", Integer.toString(stats.attack)));
@@ -33,8 +33,7 @@ public class XMLSaver {
     }
 
     // Converts item to element
-    public static Element itemToElement(Document document, Item item)
-    {
+    public static Element itemToElement(Document document, Item item) {
         Element itemElem = document.createElement("item");
 
         // Add item name, description value
@@ -43,33 +42,25 @@ public class XMLSaver {
         itemElem.appendChild(createElemWithText(document, "value", Integer.toString(item.getValue())));
 
         // Adds type-specific data
-        if(item instanceof Bag bag)
-        {
+        if (item instanceof Bag bag) {
             itemElem.setAttribute("type", "bag");
 
             // Add bag capacity
             itemElem.appendChild(createElemWithText(document, "capacity", Integer.toString(bag.getCapacity())));
-        }
-        else if(item instanceof Consumable consumable)
-        {
+        } else if (item instanceof Consumable consumable) {
             itemElem.setAttribute("type", "consumable");
 
             // Add consumable stats and duration attribute if applicable
             itemElem.appendChild(statsToElement(document, consumable.getStats()));
-            if(consumable.getDuration() != 0)
+            if (consumable.getDuration() != 0)
                 itemElem.setAttribute("duration", Integer.toString(consumable.getDuration()));
-        }
-        else if(item instanceof Equippable equippable)
-        {
+        } else if (item instanceof Equippable equippable) {
             itemElem.setAttribute("type", "equippable");
-            int tagIndex = Equip_Tag.tagToIndex(equippable.getEquipTag())
-;
+
             // Add equipment stat and equipment type
             itemElem.appendChild(statsToElement(document, equippable.getStats()));
-            itemElem.setAttribute("equipType", Integer.toString(tagIndex));
-        }
-        else
-        {
+            itemElem.setAttribute("equipType", equippable.getEquipTag().name());
+        } else {
             itemElem.setAttribute("type", "item");
         }
         return itemElem;
@@ -90,15 +81,15 @@ public class XMLSaver {
         // Add entity items
         Element itemsElem = document.createElement("items");
         Inventory inventory = entity.getInventory();
-        for(Bag bag : inventory.bags)
-            for(Item item : bag.items)
+        for (Bag bag : inventory.bags)
+            for (Item item : bag.items)
                 itemsElem.appendChild(itemToElement(document, item));
         entityElem.appendChild(itemsElem);
 
         // Add entity type attribute
-        if(entity instanceof NPC)
+        if (entity instanceof NPC)
             entityElem.setAttribute("type", "npc");
-        else if(entity instanceof Player)
+        else if (entity instanceof Player)
             entityElem.setAttribute("type", "player");
         else
             entityElem.setAttribute("type", "entity");
@@ -106,7 +97,8 @@ public class XMLSaver {
         return entityElem;
     }
 
-    public static void writeDocument(Document document, String outputPath) throws TransformerFactoryConfigurationError, TransformerException{
+    public static void writeDocument(Document document, String outputPath)
+            throws TransformerFactoryConfigurationError, TransformerException {
         Transformer transformer = TransformerFactory.newInstance().newTransformer();
         transformer.setOutputProperty(OutputKeys.INDENT, "yes");
         DOMSource source = new DOMSource(document);
@@ -125,13 +117,13 @@ public class XMLSaver {
             // Add player's equipments
             Inventory inventory = player.getInventory();
             Element equips = document.createElement("equips");
-            for(Equippable equippable : inventory.equipment.values())
+            for (Equippable equippable : inventory.equipment.values())
                 equips.appendChild(itemToElement(document, equippable));
             playerElem.appendChild(equips);
 
             // Add player's bags
             Element bagsElem = document.createElement("bags");
-            for(Bag bag : inventory.bags)
+            for (Bag bag : inventory.bags)
                 bagsElem.appendChild(itemToElement(document, bag));
             playerElem.appendChild(bagsElem);
 
@@ -141,6 +133,28 @@ public class XMLSaver {
             writeDocument(document, outputPath);
         } catch (TransformerException e) {
             e.printStackTrace();
+        } catch (ParserConfigurationException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static Element roomToElem(Document document, Room room) {
+        Element roomElem = document.createElement("room");
+        return roomElem;
+    }
+
+    public static void saveMap(Map map, String outputPath) {
+        try {
+            DocumentBuilder docBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+            Document document = docBuilder.newDocument();
+
+            // Create root element
+            Element mapElem = document.createElement("map");
+
+            // Convert each room into element for map
+            for (Room room : map.rooms) {
+                mapElem.appendChild(roomToElem(document, room));
+            }
         } catch (ParserConfigurationException e) {
             e.printStackTrace();
         }

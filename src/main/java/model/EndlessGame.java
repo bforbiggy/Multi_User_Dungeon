@@ -19,7 +19,7 @@ public class EndlessGame extends Game {
      * Initialization process for the game.
      * 
      * @param player Player
-     * @param map    Map
+     * @param map Map
      */
     public EndlessGame(Player player) {
         this.player = player;
@@ -78,6 +78,7 @@ public class EndlessGame extends Game {
 
     /**
      * Attempts to use exit at specified location
+     * 
      * @param x x location of exit
      * @param y y location of exit
      * @return whether or not an exit was successfully used

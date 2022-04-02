@@ -6,7 +6,6 @@ import model.entities.*;
 import model.env.*;
 import model.events.*;
 import model.items.*;
-import model.items.Equippable.Equip_Tag;
 
 // This class acts as model-view AND controller AND view
 public class Game implements PlayerTurnEndListener {
@@ -273,7 +272,7 @@ public class Game implements PlayerTurnEndListener {
         return false;
     }
 
-    public void unequipItem(Equip_Tag unequipTag) {
+    public void unequipItem(EquipTag unequipTag) {
         inventory.unequipItem(player, unequipTag);
     }
 

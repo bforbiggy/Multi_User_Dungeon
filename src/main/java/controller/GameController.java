@@ -6,7 +6,7 @@ import model.Game;
 import model.entities.Player;
 import model.env.Location;
 import model.env.Map;
-import model.items.Equippable.Equip_Tag;
+import model.items.EquipTag;
 import persistence.FileConstants;
 import persistence.accounts.Account;
 import persistence.accounts.AccountStat;
@@ -108,7 +108,7 @@ public class GameController extends Controller {
         }
         // Unequip item
         else if (tokens[0].startsWith("UNEQUIP")) {
-            game.unequipItem(Equip_Tag.tags[parseInt(tokens[1])]);
+            game.unequipItem(EquipTag.valueOf(tokens[1]));
         }
         // Consume item
         else if (tokens[0].startsWith("C")) {

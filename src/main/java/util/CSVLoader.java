@@ -9,7 +9,6 @@ import static java.lang.Integer.parseInt;
 import model.entities.*;
 import model.env.*;
 import model.items.*;
-import model.items.Equippable.Equip_Tag;
 import persistence.FileConstants;
 
 public class CSVLoader {
@@ -47,7 +46,7 @@ public class CSVLoader {
             if (tokens.length == 1)
                 return Equippable.generateItem();
             Stats stats = new Stats(parseInt(tokens[4]), parseInt(tokens[5]), parseInt(tokens[6]));
-            Equip_Tag tag = Equip_Tag.tags[parseInt(tokens[7])];
+            EquipTag tag = EquipTag.valueOf(tokens[7]);
             return new Equippable(tokens[1], tokens[2], parseInt(tokens[3]), stats, tag);
         }
         // Bag conversion
