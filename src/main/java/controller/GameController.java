@@ -3,13 +3,13 @@ package controller;
 import java.util.Scanner;
 
 import model.Game;
+import model.Statistic;
 import model.entities.Player;
 import model.env.Location;
 import model.env.Map;
 import model.items.EquipTag;
 import persistence.FileConstants;
 import persistence.accounts.Account;
-import persistence.accounts.AccountStat;
 import util.*;
 
 import static java.lang.Integer.parseInt;
@@ -144,14 +144,14 @@ public class GameController extends Controller {
             // Game has been won
             if (game.getGameState() == Game.GameState.VICTORY) {
                 System.out.println("Congratulations, you beat the game!");
-                account.addToData(AccountStat.GAMES_PLAYED, 1);
+                account.addToData(Statistic.GAMES_PLAYED, 1);
                 return null;
             }
             // Game has been lost
             else if (game.getGameState() == Game.GameState.LOSS) {
                 System.out.println("You died...");
-                account.addToData(AccountStat.GAMES_PLAYED, 1);
-                account.addToData(AccountStat.LIVES_LOST, 1);
+                account.addToData(Statistic.GAMES_PLAYED, 1);
+                account.addToData(Statistic.LIVES_LOST, 1);
                 return null;
             }
 

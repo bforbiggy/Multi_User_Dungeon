@@ -9,6 +9,7 @@ public class DayCycle {
                 Thread.sleep(CYCLE_TIMER * 1000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
+                Thread.currentThread().interrupt();
             }
             toggleDayNight();
         }

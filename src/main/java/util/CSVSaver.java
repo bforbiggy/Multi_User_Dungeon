@@ -2,6 +2,7 @@ package util;
 
 import java.io.File;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import model.entities.*;
@@ -126,11 +127,9 @@ public class CSVSaver {
      * @param outputPath path to save file to
      */
     public static void savePlayer(Player player, String outputPath) {
-        try {
+        File outputFile = new File(outputPath);
+        try (FileWriter writer = new FileWriter(outputFile)){
             String output = "";
-            File outputFile = new File(outputPath);
-            outputFile.createNewFile();
-            FileWriter writer = new FileWriter(outputFile);
 
             Inventory inventory = player.getInventory();
 
@@ -160,7 +159,6 @@ public class CSVSaver {
             output += String.join(FileConstants.COMMA, items);
 
             writer.write(output);
-            writer.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -255,16 +253,13 @@ public class CSVSaver {
      * @param outputPath
      */
     public static void saveMap(Map map, String outputPath) {
-        try {
-            File outputFile = new File(outputPath);
-            outputFile.createNewFile();
-            FileWriter writer = new FileWriter(outputFile);
+        File outputFile = new File(outputPath);
+        try (FileWriter writer = new FileWriter(outputFile)){
 
             for (Room room : map.rooms) {
                 writer.write(roomToString(room));
             }
-            writer.close();
-        } catch (Exception e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }

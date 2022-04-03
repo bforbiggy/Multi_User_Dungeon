@@ -3,13 +3,15 @@ package persistence;
 import java.util.regex.Pattern;
 
 public class FileConstants {
-    // Text assets for game
-    public final static String TITLE_SCREEN_PATH = "src/main/resources/assets/title.txt";
-    public final static String CONTROLS_PATH = "src/main/resources/assets/controls.txt";
+    // Text assets
+    public static final String TITLE_SCREEN_PATH = "src/main/resources/assets/title.txt";
+    public static final String CONTROLS_PATH = "src/main/resources/assets/controls.txt";
+    public static final String GUEST_MENU_PATH = FileConstants.ASSETS_PATH + "guestMenu.txt";
+    public static final String USER_MENU_TXT = FileConstants.ASSETS_PATH + "userMenu.txt";
 
     // Database paths
-    public final static String SAVE_FOLDER_PATH = "src/main/resources/saves/";
-    public final static String ASSETS_PATH = "src/main/resources/assets/";
+    public static final String SAVE_FOLDER_PATH = "src/main/resources/saves/";
+    public static final String ASSETS_PATH = "src/main/resources/assets/";
     public static final String ACCOUNT_PATH = "src/main/resources/accounts.db";
 
 

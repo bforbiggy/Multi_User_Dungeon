@@ -5,8 +5,7 @@ import java.io.FilenameFilter;
 import java.util.Arrays;
 import java.util.List;
 
-import model.EndlessGame;
-import model.Game;
+import model.*;
 import model.entities.Player;
 import model.env.Map;
 import persistence.FileConstants;
@@ -19,10 +18,8 @@ public class MenuController extends Controller {
         NEW, CONTINUE, ENDLESS, SPECTATE
     }
 
-    private static final String GUEST_MENU_TXT = TextLoader.loadText(FileConstants.ASSETS_PATH +
-            "guestMenu.txt");
-    private static final String USER_MENU_TXT = TextLoader.loadText(FileConstants.ASSETS_PATH +
-            "userMenu.txt");
+    private static final String GUEST_MENU_TXT = TextLoader.loadText(FileConstants.GUEST_MENU_PATH);
+    private static final String USER_MENU_TXT = TextLoader.loadText(FileConstants.USER_MENU_TXT);
 
     private AccountService accountService;
     private List<File> maps;
@@ -63,18 +60,23 @@ public class MenuController extends Controller {
             }
         }
         // Registering account
-        else if (tokens[0].equals("REGISTER") && tokens.length >= 2) {
-            if (accountService.addAccount(tokens[1], tokens[2])) {
+        else if (tokens[0].equals("REGISTER") && tokens.length >= 3) {
+            account = accountService.addAccount(tokens[1], tokens[2]);
+            if (account != null) {
                 accountService.save(FileConstants.ACCOUNT_PATH);
             }
-            else {
-                account = null;
+        }
+        // Change password
+        else if (tokens[0].equals("CHANGEPASSWORD") && tokens.length >= 3) {
+            if (account != null && account.getPassword().equals(tokens[1])) {
+                account.setPassword(tokens[2]);
+                accountService.save(FileConstants.ACCOUNT_PATH);
             }
         }
         // View account history
         else if (tokens[0].equals("HISTORY") && account != null) {
             System.out.println("[Player History]");
-            for (AccountStat stat : account.getKeySet()) {
+            for (Statistic stat : account.getKeySet()) {
                 System.out.println(String.format("%s: %d", stat.name(), account
                         .getData(stat)));
             }
@@ -117,10 +119,8 @@ public class MenuController extends Controller {
         }
         // Continue from a save
         else if (tokens[0].equals("CONTINUE") && account != null) {
-            player = CSVLoader.loadPlayer(FileConstants.SAVE_FOLDER_PATH + account.getUsername() +
-                    "player.csv");
-            map = CSVLoader.loadMap(player, FileConstants.SAVE_FOLDER_PATH + account.getUsername() +
-                    "map.csv");
+            player = CSVLoader.loadPlayer(FileConstants.SAVE_FOLDER_PATH + account.getUsername() + "player.csv");
+            map = CSVLoader.loadMap(player, FileConstants.SAVE_FOLDER_PATH + account.getUsername() + "map.csv");
             state = State.CONTINUE;
         }
     }

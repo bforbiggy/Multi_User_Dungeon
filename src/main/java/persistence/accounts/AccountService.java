@@ -9,7 +9,7 @@ import javax.xml.transform.*;
 
 import org.w3c.dom.*;
 import org.xml.sax.SAXException;
-
+import model.Statistic;
 import util.XMLLoader;
 import util.XMLSaver;
 
@@ -20,13 +20,13 @@ public class AccountService {
         return accounts.containsKey(name);
     }
 
-    public boolean addAccount(String username, String password) {
+    public Account addAccount(String username, String password) {
         if (!accounts.containsKey(username)) {
             Account account = new Account(username, password);
             accounts.put(username, account);
-            return true;
+            return account;
         }
-        return false;
+        return null;
     }
 
     public boolean addAccount(Account account) {
@@ -59,7 +59,7 @@ public class AccountService {
                 accountElem.setAttribute("password", account.getPassword());
 
                 // Create each element for account statistic
-                for (AccountStat stat : account.getKeySet()) {
+                for (Statistic stat : account.getKeySet()) {
                     Element statElem = document.createElement(stat.name());
                     statElem.setTextContent(account.getData(stat).toString());
                     accountElem.appendChild(statElem);
@@ -95,13 +95,12 @@ public class AccountService {
                     String password = accountElem.getAttribute("password");
 
                     // Parse account statistics
-                    EnumMap<AccountStat, Integer> accountStats = new EnumMap<AccountStat, Integer>(AccountStat.class);
+                    EnumMap<Statistic, Integer> accountStats = new EnumMap<Statistic, Integer>(Statistic.class);
                     NodeList statNodes = accountElem.getChildNodes();
                     for (int j = 0; j < statNodes.getLength(); j++) {
                         Node statNode = statNodes.item(j);
-                        if(statNode.getNodeType() == Node.ELEMENT_NODE)
-                        {
-                            AccountStat stat = AccountStat.valueOf(statNode.getNodeName());
+                        if (statNode.getNodeType() == Node.ELEMENT_NODE) {
+                            Statistic stat = Statistic.valueOf(statNode.getNodeName());
                             Integer val = Integer.parseInt(statNode.getTextContent());
                             accountStats.put(stat, val);
                         }
