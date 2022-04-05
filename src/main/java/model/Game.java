@@ -1,11 +1,13 @@
 package model;
 
 import java.util.ArrayList;
-
+import java.util.HashSet;
 import model.entities.*;
 import model.env.*;
 import model.events.*;
 import model.items.*;
+import model.tracking.StatTracker;
+import model.tracking.TrackedStat;
 
 // This class acts as model-view AND controller AND view
 public class Game implements PlayerTurnEndListener {
@@ -48,6 +50,8 @@ public class Game implements PlayerTurnEndListener {
     public void onPlayerTurnEnd(PlayerTurnEnd playerTurnEnd) {
         if (player.isDead()) {
             gameState = GameState.LOSS;
+            StatTracker.getTracker().addValue(TrackedStat.GAMES_PLAYED, 1);
+            StatTracker.getTracker().addValue(TrackedStat.LIVES_LOST, 1);
 
             // Convert player into a corpse
             NPC corpse = new NPC(player.getName(), player.getDescription(), new Stats(0, 0, 0), true, new Inventory(1));
@@ -157,6 +161,7 @@ public class Game implements PlayerTurnEndListener {
                 currRoom.setContent(dest, target);
                 currRoom.setOccupant(dest, null);
                 System.out.println(target.getName() + " has been killed!");
+                StatTracker.getTracker().addValue(TrackedStat.MONSTERS_SLAIN, 1);
             }
         }
 
@@ -167,23 +172,35 @@ public class Game implements PlayerTurnEndListener {
      * Attempts to return the inventory of whatever is on current location.
      * Fails if there is nothing at player location with a viewable inventory.
      */
+    private HashSet<Inventory> lootedInventories = new HashSet<Inventory>();
     public Inventory viewLoot() {
         Room currRoom = map.currRoom;
         Tile tile = currRoom.getTileAtLocation(player.getLocation());
 
-        // If there is an lootable object at target location, open its inventory
+        // If there is an lootable object at target location, grab its inventory
+        Inventory inv = null;
         if (tile.content instanceof Chest chest) {
-            Inventory inv = chest.getInventory();
-            inventory.gold += inv.gold;
-            inv.gold = 0;
-            return inv;
+            inv = chest.getInventory();
         } else if (tile.content instanceof Entity entity) {
-            Inventory inv = entity.getInventory();
+            inv = entity.getInventory();
+        }
+
+        if(inv != null){
+            StatTracker tracker = StatTracker.getTracker();
+
+            // Auto loot gold
+            tracker.addValue(TrackedStat.GOLD_EARNED, inv.gold);
             inventory.gold += inv.gold;
             inv.gold = 0;
-            return inv;
+
+            // Track number of new items discovered
+            if(lootedInventories.add(inv)){
+                for(Bag bag : inventory.bags)
+                    tracker.addValue(TrackedStat.ITEMS_FOUND, bag.items.size());
+            }
         }
-        return null;
+
+        return inv;
     }
 
     /**
@@ -195,25 +212,22 @@ public class Game implements PlayerTurnEndListener {
      * @param itemIndex the item index of target item in bag
      */
     public void doLoot(int bagIndex, int itemIndex) {
-        Inventory targetInv = null;
+        Inventory inv = viewLoot();
 
         // Access inventory of current tile contents
-        Room currRoom = map.currRoom;
-        Tile tile = currRoom.getTileAtLocation(player.getLocation());
-        if (tile.content instanceof Chest chest) {
-            targetInv = chest.getInventory();
-        } else if (tile.content instanceof Entity entity && tile.content != player) {
-            targetInv = entity.getInventory();
-        }
+        // Room currRoom = map.currRoom;
+        // Tile tile = currRoom.getTileAtLocation(player.getLocation());
+        // if (tile.content instanceof Chest chest && tile.content instanceof Entity entity && tile.content != player) {
+        //     inv = chest.getInventory();
+        // } else if (tile.content instanceof Entity entity && tile.content != player) {
+        //     inv = entity.getInventory();
+        // }
 
         // If inventory could be accessed, loot gold and item if possible
-        if (targetInv != null) {
-            inventory.gold += targetInv.gold;
-            targetInv.gold = 0;
-
-            Item item = targetInv.getItem(bagIndex, itemIndex);
+        if (inv != null) {
+            Item item = inv.getItem(bagIndex, itemIndex);
             if (item != null)
-                Inventory.TransferItem(targetInv, player.getInventory(), item);
+                Inventory.TransferItem(inv, player.getInventory(), item);
         }
     }
 
@@ -297,6 +311,7 @@ public class Game implements PlayerTurnEndListener {
     public void finishGame() {
         if (map.currRoom.getType() == 2) {
             gameState = GameState.VICTORY;
+            StatTracker.getTracker().addValue(TrackedStat.GAMES_PLAYED, 1);
         }
     }
 

@@ -9,7 +9,9 @@ import javax.xml.transform.*;
 
 import org.w3c.dom.*;
 import org.xml.sax.SAXException;
-import model.Statistic;
+
+import model.tracking.StatTracker;
+import model.tracking.TrackedStat;
 import util.XMLLoader;
 import util.XMLSaver;
 
@@ -59,10 +61,16 @@ public class AccountService {
                 accountElem.setAttribute("password", account.getPassword());
 
                 // Create each element for account statistic
-                for (Statistic stat : account.getKeySet()) {
+                StatTracker accountTracker = account.getTracker();
+                for (TrackedStat stat : TrackedStat.values()) {
+                    // Process stat name and data
                     Element statElem = document.createElement(stat.name());
-                    statElem.setTextContent(account.getData(stat).toString());
-                    accountElem.appendChild(statElem);
+                    Integer statVal = accountTracker.getValue(stat);
+                    statElem.setTextContent(statVal.toString());
+
+                    // Only add element in value isn't 0
+                    if(statVal != 0)
+                        accountElem.appendChild(statElem);
                 }
 
                 root.appendChild(accountElem);
@@ -72,9 +80,7 @@ public class AccountService {
 
             // Writes document to file
             XMLSaver.writeDocument(document, filePath);
-        } catch (TransformerException e) {
-            e.printStackTrace();
-        } catch (ParserConfigurationException e) {
+        } catch (TransformerException| ParserConfigurationException e) {
             e.printStackTrace();
         }
     }
@@ -95,19 +101,19 @@ public class AccountService {
                     String password = accountElem.getAttribute("password");
 
                     // Parse account statistics
-                    EnumMap<Statistic, Integer> accountStats = new EnumMap<Statistic, Integer>(Statistic.class);
+                    EnumMap<TrackedStat, Integer> accountStats = new EnumMap<TrackedStat, Integer>(TrackedStat.class);
                     NodeList statNodes = accountElem.getChildNodes();
                     for (int j = 0; j < statNodes.getLength(); j++) {
                         Node statNode = statNodes.item(j);
                         if (statNode.getNodeType() == Node.ELEMENT_NODE) {
-                            Statistic stat = Statistic.valueOf(statNode.getNodeName());
+                            TrackedStat stat = TrackedStat.valueOf(statNode.getNodeName());
                             Integer val = Integer.parseInt(statNode.getTextContent());
                             accountStats.put(stat, val);
                         }
                     }
 
                     // Create account
-                    Account account = new Account(username, password, accountStats);
+                    Account account = new Account(username, password, new StatTracker(accountStats));
                     accountService.addAccount(account);
                 }
             }

@@ -1,7 +1,7 @@
 package model.env;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.EnumMap;
 
 import model.entities.*;
 import model.events.PlayerTurnEnd;
@@ -9,7 +9,7 @@ import model.events.PlayerTurnEndListener;
 
 public class Room implements PlayerTurnEndListener{
     private static final String[] ROOM_TYPES = {"library", "closet", "hall", "bedroom", "cave", "ruin"};
-    public HashMap<Direction, Tile> neighbors = new HashMap<Direction, Tile>(4);
+    public EnumMap<Direction, Tile> neighbors = new EnumMap<Direction, Tile>(Direction.class);
 
     private Tile[][] tiles;
     private int height;

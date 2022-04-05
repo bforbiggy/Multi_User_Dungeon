@@ -3,7 +3,6 @@ package controller;
 import java.util.Scanner;
 
 import model.Game;
-import model.Statistic;
 import model.entities.Player;
 import model.env.Location;
 import model.env.Map;
@@ -13,10 +12,12 @@ import persistence.accounts.Account;
 import util.*;
 
 import static java.lang.Integer.parseInt;
+import java.io.File;
 
 public class GameController extends Controller {
     private Scanner scanner = new Scanner(System.in);
-    public static final String TITLE_SCREEN_STRING = TextLoader.loadText(FileConstants.TITLE_SCREEN_PATH);
+    public static final String TITLE_SCREEN_STRING = TextLoader.loadText(
+            FileConstants.TITLE_SCREEN_PATH);
     public static final String CONTROLS_STRING = TextLoader.loadText(FileConstants.CONTROLS_PATH);
 
     private Object view;
@@ -48,8 +49,10 @@ public class GameController extends Controller {
         }
         // Save the game
         else if (tokens[0].equals("SAVE")) {
-            CSVSaver.savePlayer(player, FileConstants.SAVE_FOLDER_PATH + account.getUsername() + "player.csv");
-            CSVSaver.saveMap(map, FileConstants.SAVE_FOLDER_PATH + account.getUsername() + "map.csv");
+            CSVSaver.savePlayer(player, FileConstants.SAVE_FOLDER_PATH + account.getUsername() +
+                    "player.csv");
+            CSVSaver.saveMap(map, FileConstants.SAVE_FOLDER_PATH + account.getUsername() +
+                    "map.csv");
             System.out.println("Game saved!");
         }
         // Use exit
@@ -68,13 +71,16 @@ public class GameController extends Controller {
         else if (tokens[0].equals("W")) {
             Location playerLoc = player.getLocation();
             game.doMove(playerLoc.getX(), playerLoc.getY() - 1);
-        } else if (tokens[0].equals("A")) {
+        }
+        else if (tokens[0].equals("A")) {
             Location playerLoc = player.getLocation();
             game.doMove(playerLoc.getX() - 1, playerLoc.getY());
-        } else if (tokens[0].equals("S")) {
+        }
+        else if (tokens[0].equals("S")) {
             Location playerLoc = player.getLocation();
             game.doMove(playerLoc.getX(), playerLoc.getY() + 1);
-        } else if (tokens[0].equals("D")) {
+        }
+        else if (tokens[0].equals("D")) {
             Location playerLoc = player.getLocation();
             game.doMove(playerLoc.getX() + 1, playerLoc.getY());
         }
@@ -103,23 +109,23 @@ public class GameController extends Controller {
                 view = game.viewShop();
         }
         // Equip item
-        else if (tokens[0].startsWith("EQUIP")) {
+        else if (tokens[0].startsWith("EQUIP") && tokens.length >= 3) {
             game.equipItem(parseInt(tokens[1]) - 1, parseInt(tokens[2]) - 1);
         }
         // Unequip item
-        else if (tokens[0].startsWith("UNEQUIP")) {
+        else if (tokens[0].startsWith("UNEQUIP") && tokens.length >= 2) {
             game.unequipItem(EquipTag.valueOf(tokens[1]));
         }
         // Consume item
-        else if (tokens[0].startsWith("C")) {
+        else if (tokens[0].startsWith("C") && tokens.length >= 3) {
             game.consumeItem(parseInt(tokens[1]) - 1, parseInt(tokens[2]) - 1);
         }
         // Swap Bags
-        else if (tokens[0].startsWith("SWAP")) {
+        else if (tokens[0].startsWith("SWAP") && tokens.length >= 4) {
             game.swapBags(parseInt(tokens[1]), parseInt(tokens[2]) - 1, parseInt(tokens[3]) - 1);
         }
         // Destroy item
-        else if (tokens[0].equals("DESTROY"))
+        else if (tokens[0].equals("DESTROY") && tokens.length >= 3)
             game.destroyItem(parseInt(tokens[1]) - 1, parseInt(tokens[2]) - 1);
         // Return to room view
         else if (tokens[0].startsWith("R") || tokens[0].startsWith("B"))
@@ -139,19 +145,12 @@ public class GameController extends Controller {
 
             String input = scanner.nextLine();
 
-            // TODO: Finished games should be deleted, endless games should be saved
-
-            // Game has been won
-            if (game.getGameState() == Game.GameState.VICTORY) {
-                System.out.println("Congratulations, you beat the game!");
-                account.addToData(Statistic.GAMES_PLAYED, 1);
-                return null;
-            }
-            // Game has been lost
-            else if (game.getGameState() == Game.GameState.LOSS) {
-                System.out.println("You died...");
-                account.addToData(Statistic.GAMES_PLAYED, 1);
-                account.addToData(Statistic.LIVES_LOST, 1);
+            // Game has ended, so we delete the saves (no need to update account stats, menuController autosaves)
+            if (game.getGameState() != Game.GameState.ONGOING) {
+                File playerSave = new File(FileConstants.SAVE_FOLDER_PATH + account.getUsername() + "player.csv");
+                playerSave.delete();
+                File mapSave = new File(FileConstants.SAVE_FOLDER_PATH + account.getUsername() + "map.csv");
+                mapSave.delete();
                 return null;
             }
 

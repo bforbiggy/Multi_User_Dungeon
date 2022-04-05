@@ -10,7 +10,6 @@ import javax.xml.transform.stream.StreamResult;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import model.Game;
 import model.entities.*;
 import model.env.Map;
 import model.env.Room;
@@ -131,9 +130,7 @@ public class XMLSaver {
 
             // Writes document to file
             writeDocument(document, outputPath);
-        } catch (TransformerException e) {
-            e.printStackTrace();
-        } catch (ParserConfigurationException e) {
+        } catch (TransformerException| ParserConfigurationException e) {
             e.printStackTrace();
         }
     }

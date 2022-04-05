@@ -8,6 +8,8 @@ import java.util.List;
 import model.*;
 import model.entities.Player;
 import model.env.Map;
+import model.tracking.StatTracker;
+import model.tracking.TrackedStat;
 import persistence.FileConstants;
 import persistence.accounts.*;
 import util.CSVLoader;
@@ -36,9 +38,7 @@ public class MenuController extends Controller {
 
         // Loads in map files
         File targetFolder = new File(FileConstants.ASSETS_PATH);
-        FilenameFilter filter = (file, name) -> {
-            return name.endsWith(".map");
-        };
+        FilenameFilter filter = (file, name) -> name.endsWith(".map");
         maps = Arrays.asList(targetFolder.listFiles(filter));
     }
 
@@ -50,11 +50,12 @@ public class MenuController extends Controller {
         if (tokens[0].equals("LOGIN") && tokens.length >= 3) {
             account = accountService.authenticate(tokens[1], tokens[2]);
 
-            // Authentication success: Autoloads game in progress (if available)
+            // Authentication success
             if (account != null) {
                 System.out.println("Successfully logged in!");
+                StatTracker.loadTracker(account.getTracker());
             }
-            // Authentication fail: Inform user
+            // Authentication fail
             else {
                 System.out.println("Invalid username/password combination!");
             }
@@ -76,9 +77,8 @@ public class MenuController extends Controller {
         // View account history
         else if (tokens[0].equals("HISTORY") && account != null) {
             System.out.println("[Player History]");
-            for (Statistic stat : account.getKeySet()) {
-                System.out.println(String.format("%s: %d", stat.name(), account
-                        .getData(stat)));
+            for (TrackedStat stat : TrackedStat.values()) {
+                System.out.println(String.format("%s: %d", stat.name(), account.getTracker().getValue(stat)));
             }
         }
         // View available maps
@@ -142,11 +142,9 @@ public class MenuController extends Controller {
             if (state == State.CONTINUE || state == State.NEW) {
                 Game game = new Game(player, map);
                 return new GameController(account, game);
-            }
-            else if (state == State.SPECTATE) {
+            } else if (state == State.SPECTATE) {
                 return new SpectatorController(map);
-            }
-            else if (state == State.ENDLESS) {
+            } else if (state == State.ENDLESS) {
                 EndlessGame game = new EndlessGame(player);
                 return new GameController(account, game);
             }

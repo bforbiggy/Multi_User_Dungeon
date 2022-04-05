@@ -68,10 +68,8 @@ public class Trap
     }
 
     @Override
-    public String toString()
-    {
-        // Uncomment if we want traps to be invisible
-        // return detected ? "x" : "X";
+    public String toString(){
+        if(!detected) return " ";
         return disabled ? "x" : "X";
     }
 }
