@@ -2,6 +2,7 @@ package model.env;
 
 import java.util.ArrayList;
 import java.util.EnumMap;
+import java.util.HashSet;
 import model.GameObject;
 import model.entities.*;
 import model.events.PlayerTurnEnd;
@@ -10,7 +11,7 @@ import model.events.PlayerTurnEndListener;
 public class Room implements PlayerTurnEndListener {
     private static final String[] ROOM_TYPES = {"library", "closet", "hall", "bedroom", "cave", "ruin"};
     private EnumMap<Direction, Tile> neighbors = new EnumMap<>(Direction.class);
-    public ArrayList<Entity> entities = new ArrayList<>();
+    public HashSet<Entity> entities = new HashSet<>();
 
     private Tile[][] tiles;
     private int height;
@@ -58,18 +59,31 @@ public class Room implements PlayerTurnEndListener {
 
         if (occupant instanceof Entity entity) {
             entity.setLocation(location);
+            entities.add(entity);
         }
     }
 
     /**
-     * Given a location, this sets an obj to the corresponding tile This will override whatever was previously on the tile.
+     * Given a location, this sets an obj to the corresponding tile this will override whatever was previously on the tile.
      * 
      * @param location location to add obj to
      * @param obj obj to add to tile
      */
-    public void forceAddData(Location location, GameObject obj) {
-        Tile tile = getTileAtLocation(location);
-        tile.forceAdd(obj);
+    public void forceSetData(Location location, GameObject obj) {
+        if(obj instanceof Obstacle){
+            setOccupant(location, obj);
+        }
+        else if(obj instanceof Entity entity){
+            if(entity.isDead() || entity instanceof Merchant)
+                setContent(location, obj);
+            else
+                setOccupant(location, obj);
+            entity.setLocation(location);
+            entities.add(entity);
+        }
+        else{
+            setContent(location, obj);
+        }
     }
 
     /**
@@ -117,23 +131,6 @@ public class Room implements PlayerTurnEndListener {
                 }
             }
         }
-    }
-
-    /**
-     * Gets a list of all npcs in room
-     * 
-     * @return list of all npcs
-     */
-    public ArrayList<NPC> getNPCs() {
-        ArrayList<NPC> npcs = new ArrayList<NPC>();
-        for (int y = 0; y < height; y++) {
-            for (int x = 0; x < width; x++) {
-                Tile tile = tiles[y][x];
-                if (tile.occupant instanceof NPC npc)
-                    npcs.add(npc);
-            }
-        }
-        return npcs;
     }
 
     /**
@@ -255,7 +252,7 @@ public class Room implements PlayerTurnEndListener {
         this.type = type;
     }
 
-    public ArrayList<Entity> getEntities() {
+    public HashSet<Entity> getEntities() {
         return entities;
     }
 

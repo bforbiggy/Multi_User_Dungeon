@@ -133,10 +133,11 @@ public class CSVLoader {
      * Exit Tile: Eid (ex. E5)
      * Player Tile: P
      * @param input input to process
-     * @param tile tile to set data of
+     * @param room room of tile
+     * @param tile location to set tile of
      * @param runningList list to read each heavy data object from
      */
-    public static void writeStringToTile(String input, Tile tile, ArrayList<GameObject> runningList) {
+    public static void writeStringToTile(String input, Room room, Location loc, ArrayList<GameObject> runningList) {
         // Add everything on tile to the tile
         for (String objectString : input.split(FileConstants.VERT_BAR_REGEX)) {
             GameObject obj = null;
@@ -161,7 +162,7 @@ public class CSVLoader {
                 obj = runningList.get(index);
             }
 
-            tile.forceAdd(obj);
+            room.forceSetData(loc, obj);
         }
     }
 
@@ -271,7 +272,7 @@ public class CSVLoader {
                         // Read each tile of the row
                         for (int w = 0; w < width; w++) {
                             Tile tile = tiles[h][w];
-                            writeStringToTile(tokens[w], tile, objects);
+                            writeStringToTile(tokens[w], room, tile.getLocation(), objects);
 
                             // If tile has a player, update current room
                             if (tile.occupant instanceof Player player && !player.isDead())

@@ -116,6 +116,7 @@ public class MapGenerator {
         for (int y = 0; y < room.getHeight(); y++) {
             for (int x = 0; x < room.getWidth(); x++) {
                 Tile tile = tiles[y][x];
+                Location loc = tile.getLocation();
                 double val = PerlinNoise2D.noise(frequency * (x + 1) / room.getWidth(),
                         frequency * (y + 1) / room.getHeight());
                 if (tile.content == null && tile.occupant == null) {
@@ -125,22 +126,22 @@ public class MapGenerator {
                         // Place NPC
                         if (objectType <= 0.3) {
                             NPC npc = NPC.generateNPC();
-                            npc.setLocation(tile.getLocation());
-                            tile.setOccupant(npc);
+                            npc.setLocation(loc);
+                            room.setOccupant(loc, npc);
                         }
                         // Place Chest
                         else if (objectType <= 0.45) {
                             Chest chest = new Chest(Chest.generateLoot());
-                            tile.setContent(chest);
+                            room.setContent(loc, chest);
                         }
                         // Place Trap
                         else {
-                            tile.setContent(new Trap());
+                            room.setContent(loc, new Trap());
                         }
                     }
                     // Obstacle
                     else if (val >= 0.1)
-                        tile.setOccupant(new Obstacle());
+                        room.setOccupant(loc, new Obstacle());
                 }
             }
         }

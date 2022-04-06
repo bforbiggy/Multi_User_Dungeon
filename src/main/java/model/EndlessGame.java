@@ -53,7 +53,7 @@ public class EndlessGame extends Game {
             // Place exit on map
             Location loc = MapGenerator.getFreeExitLoc(room, dir);
             Tile tile = room.getTileAtLocation(loc);
-            tile.setContent(exit);
+            room.setContent(loc, exit);
             room.getNeighbors().put(dir, tile);
         }
         return room;

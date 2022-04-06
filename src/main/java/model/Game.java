@@ -85,14 +85,17 @@ public class Game implements PlayerTurnEndListener {
 
         // Remove old room & its npcs from appropriate events
         playerTurnEnd.removeListener(map.currRoom);
-        for (NPC npc : map.currRoom.getNPCs())
-            playerTurnEnd.removeListener(npc);
+        for (Entity entity : map.currRoom.getEntities())
+            if(entity instanceof NPC npc)
+                playerTurnEnd.removeListener(npc);
 
         // Add new room and its npcs to appropriate events
         playerTurnEnd.addListener(newRoom);
-        for (NPC npc : newRoom.getNPCs()) {
-            dayCycle.addListener(npc);
-            playerTurnEnd.addListener(npc);
+        for (Entity entity : newRoom.getEntities()) {
+            if (entity instanceof NPC npc){
+                dayCycle.addListener(npc);
+                playerTurnEnd.addListener(npc);
+            }
         }
     }
 
