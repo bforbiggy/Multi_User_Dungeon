@@ -1,7 +1,8 @@
 package model.entities;
 
 import java.util.Random;
-
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import model.items.*;
 
 public class Merchant extends Entity{
@@ -10,8 +11,6 @@ public class Merchant extends Entity{
     private static final int ITEM_COUNT = 3;
     private static final double SELL_RATE = 0.5;
     private static final Random randy = new Random();
-
-    private boolean open = true;
 
     public Merchant(String name, String description, Stats stats, Inventory inventory){
         super(name, description, stats);
@@ -28,7 +27,7 @@ public class Merchant extends Entity{
      * @return the item bought, null if buy operation has failed
      */
     public Item buyItem(Inventory buyerInventory, int itemIndex){
-        if(open && itemIndex < ITEM_COUNT && buyerInventory.hasSpace())
+        if(itemIndex < ITEM_COUNT && buyerInventory.hasSpace())
         {
             Item item = inventory.bags.get(0).getItem(itemIndex);
             if(item != null && buyerInventory.gold >= item.getValue())
@@ -50,7 +49,7 @@ public class Merchant extends Entity{
      * @return whether or not item was successfully sold
      */
     public boolean sellItem(Inventory sellerInventory, Item item){
-        if(open && Inventory.TransferItem(sellerInventory, Inventory.TRASH, item))
+        if(Inventory.TransferItem(sellerInventory, Inventory.TRASH, item))
         {
             sellerInventory.gold += item.getValue() * SELL_RATE;
             return true;
@@ -89,12 +88,11 @@ public class Merchant extends Entity{
         return new Merchant(name, description, stats, generateLoot());
     }
 
-    public boolean getOpen(){
-        return open;
-    }
-
-    public void setOpen(boolean open){
-        this.open = open;
+    @Override
+    public Element createMemento(Document doc) {
+        Element entityElem = super.createMemento(doc);
+        entityElem.setAttribute("type", "merchant");
+        return entityElem;
     }
 
     @Override

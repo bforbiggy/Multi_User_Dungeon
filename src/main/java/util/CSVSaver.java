@@ -211,38 +211,39 @@ public class CSVSaver {
         ArrayList<Object> storedObjects = new ArrayList<Object>();
 
         // Convert all tiles into string
-        String roomString = String.format("ROOM%n%d,%d,%d,%s%n", room.getHeight(), room.getWidth(),
+        StringBuilder roomString = new StringBuilder();
+        roomString.append(String.format("ROOM%n%d,%d,%d,%s%n", room.getHeight(), room.getWidth(),
                 room.getType(),
-                room.getDesc());
+                room.getDesc()));
         for (int h = 0; h < tiles[0].length; h++) {
             for (int w = 0; w < tiles[0].length; w++) {
-                roomString += tileToString(tiles[h][w], storedObjects);
+                roomString.append(tileToString(tiles[h][w], storedObjects));
 
                 // Add a comma for each tile (other than the last)
                 if (w != tiles[0].length - 1)
-                    roomString += FileConstants.COMMA;
+                    roomString.append(FileConstants.COMMA);
             }
-            roomString += "\n";
+            roomString.append("\n");
         }
 
         // Convert all objects into string
-        String objectsString = "";
+        StringBuilder objectsString = new StringBuilder();
         for (Object obj : storedObjects) {
             if (obj instanceof NPC npc) {
-                objectsString += "NPC\n";
-                objectsString += npcToString(npc) + "\n";
+                objectsString.append("NPC\n");
+                objectsString.append(npcToString(npc) + "\n");
             }
             else if (obj instanceof Chest chest) {
-                objectsString += "CHEST\n";
-                objectsString += invToString(chest.getInventory()) + "\n";
+                objectsString.append("CHEST\n");
+                objectsString.append(invToString(chest.getInventory()) + "\n");
             }
             else if (obj instanceof Merchant merchant) {
-                objectsString += "MERCHANT\n";
-                objectsString += merchantToString(merchant) + "\n";
+                objectsString.append("MERCHANT\n");
+                objectsString.append(merchantToString(merchant) + "\n");
             }
         }
 
-        return objectsString + roomString;
+        return objectsString.toString() + roomString.toString();
     }
 
     /**

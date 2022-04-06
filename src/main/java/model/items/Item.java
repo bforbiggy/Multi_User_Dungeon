@@ -1,8 +1,11 @@
 package model.items;
 
 import java.util.Random;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import util.Originator;
 
-public class Item 
+public class Item implements Originator
 {
     protected static Random randy = new Random();
     protected static String[] nouns = {"kneecap", "bones", "token", "marker", "laptop"};
@@ -45,9 +48,21 @@ public class Item
         return new Item(name, description, value);
     }
 
+    public Element createMemento(Document doc){
+        Element itemElem = doc.createElement("item");
+        itemElem.setAttribute("name", name);
+        itemElem.setAttribute("description", description);
+        itemElem.setAttribute("value", Integer.toString(value));
+        itemElem.setAttribute("type", "item");
+        return itemElem;
+    }
+
+    public Item loadMemento(Element element){
+        return null;
+    }
+
     @Override
-    public String toString()
-    {
+    public String toString(){
         return name + ": " + description;
     }
 }

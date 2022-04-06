@@ -1,7 +1,8 @@
 package model.entities;
 
 import java.util.Random;
-
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import model.env.Location;
 import model.env.Room;
 import model.events.DayCycle;
@@ -38,29 +39,20 @@ public class NPC extends Entity implements DayCycleListener, PlayerTurnEndListen
         this.inventory = inventory;
     }
 
-    public static Inventory generateLoot()
-    {
-        Inventory inv = new Inventory(1);
-        inv.addItem(Bag.INFINITE_BAG.copy());
-
-        // Randomly generate 0-2 items
-        for(int i = 0; i < randy.nextInt(3); i++)
-        {
-            // Decides what item to create
-            double roll = randy.nextDouble();
-            if(roll < 0.1)
-                inv.addItem(Bag.generateBag());
-            else if(roll < 0.6)
-                inv.addItem(Equippable.generateItem());
-            else if(roll < 0.8)
-                inv.addItem(Consumable.generateItem());
-            else
-                inv.addItem(Item.generateItem());
+    @Override
+    public void onPlayerTurnEnd(PlayerTurnEnd playerTurnEnd) {
+        Player player = playerTurnEnd.getGame().getPlayer();
+        Location playerLoc = player.getLocation();
+        Room room = playerTurnEnd.getGame().getCurrRoom();
+        if (isDead()) {
+            room.setContent(location, this);
+            room.setOccupant(location, null);
+            playerTurnEnd.scheduleRemoveListener(this);
         }
-
-        inv.gold += randy.nextInt(100-10)+10;
-
-        return inv;
+        else if (Location.getDistance(location, playerLoc) <= Math.sqrt(2)) {
+            int actualDamage = dealDamage(player);
+            System.out.println(name + " dealt " + actualDamage + " damage!");
+        }
     }
 
     /**
@@ -101,6 +93,29 @@ public class NPC extends Entity implements DayCycleListener, PlayerTurnEndListen
         return output;
     }
 
+    public static Inventory generateLoot() {
+        Inventory inv = new Inventory(1);
+        inv.addItem(Bag.INFINITE_BAG.copy());
+
+        // Randomly generate 0-2 items
+        for (int i = 0; i < randy.nextInt(3); i++) {
+            // Decides what item to create
+            double roll = randy.nextDouble();
+            if (roll < 0.1)
+                inv.addItem(Bag.generateBag());
+            else if (roll < 0.6)
+                inv.addItem(Equippable.generateItem());
+            else if (roll < 0.8)
+                inv.addItem(Consumable.generateItem());
+            else
+                inv.addItem(Item.generateItem());
+        }
+
+        inv.gold += randy.nextInt(100 - 10) + 10;
+
+        return inv;
+    }
+
     public static NPC generateNPC()
     {
         Stats stats = new Stats(randy.nextInt(151-50)+50, randy.nextInt(16-5)+5, randy.nextInt(11));
@@ -119,25 +134,17 @@ public class NPC extends Entity implements DayCycleListener, PlayerTurnEndListen
     }
     
     @Override
+    public Element createMemento(Document doc) {
+        Element entityElem = super.createMemento(doc);
+        entityElem.setAttribute("type", "player");
+        return entityElem;
+    }
+    
+    @Override
     public String toString(){
         return isDead() ? "n" : "N";
     }
 
-    @Override
-    public void onPlayerTurnEnd(PlayerTurnEnd playerTurnEnd) {
-        Player player = playerTurnEnd.getGame().getPlayer();
-        Location playerLoc = player.getLocation();
-        Room room = playerTurnEnd.getGame().getCurrRoom();
-        if(isDead())
-        {
-            room.setContent(location, this);
-            room.setOccupant(location, null);
-            playerTurnEnd.scheduleRemoveListener(this);
-        }
-        else if(Location.getDistance(location, playerLoc) <= Math.sqrt(2))
-        {
-            int actualDamage = dealDamage(player);
-            System.out.println(name + " dealt " + actualDamage + " damage!");
-        }
-    }
+    
+    
 }

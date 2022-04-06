@@ -1,6 +1,8 @@
 package model.items;
 
 import java.util.ArrayList;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 public class Bag extends Item
 {
@@ -127,5 +129,18 @@ public class Bag extends Item
         int value = randy.nextInt(30-10)+10;
 
         return new Bag(name, description, value, capacity);
+    }
+
+    @Override
+    public Element createMemento(Document doc) {
+        Element itemElem = super.createMemento(doc);
+        itemElem.setAttribute("type", "bag");
+        itemElem.setAttribute("capacity", Integer.toString(capacity));
+        return itemElem;
+    }
+
+    @Override
+    public Bag loadMemento(Element element){
+        return this;
     }
 }

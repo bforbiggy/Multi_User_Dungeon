@@ -1,5 +1,7 @@
 package model.items;
 
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import model.entities.Entity;
 import model.entities.Stats;
 import model.events.PlayerTurnEndListener;
@@ -7,7 +9,7 @@ import model.events.PlayerTurnEnd;
 
 public class Consumable extends Item implements PlayerTurnEndListener
 {
-    protected static String[] consumable_noun = {"banana", "flesh", "juice", "milk", "liquid hydrogen"};
+    protected static final String[] NOUN = {"banana", "flesh", "juice", "milk", "liquid hydrogen"};
     private Entity target;
 
     private int duration; // Set as 0 for permanent buff
@@ -60,7 +62,7 @@ public class Consumable extends Item implements PlayerTurnEndListener
         int duration = randy.nextBoolean() ? 0 : randy.nextInt(10-5)+5;
         Stats effect = duration == 0 ? new Stats(randy.nextInt(20-10)+10, 0, 0) : new Stats(randy.nextInt(5), randy.nextInt(5), randy.nextInt(5));
 
-        String noun = consumable_noun[randy.nextInt(consumable_noun.length)];
+        String noun = NOUN[randy.nextInt(NOUN.length)];
         String verb = verbs[randy.nextInt(verbs.length)];
         String adjective = adjectives[randy.nextInt(adjectives.length)];
 
@@ -69,5 +71,21 @@ public class Consumable extends Item implements PlayerTurnEndListener
         int value = randy.nextInt(20-5)+5;
 
         return new Consumable(name, description, value, effect, duration);
+    }
+
+    @Override
+    public Element createMemento(Document doc) {
+        Element itemElem = super.createMemento(doc);
+        itemElem.setAttribute("type", "consumable");
+        itemElem.appendChild(stats.createMemento(doc));
+
+        if(duration != 0)
+            itemElem.setAttribute("duration", Integer.toString(duration));
+        return itemElem;
+    }
+
+    @Override
+    public Consumable loadMemento(Element element) {
+        return this;
     }
 }

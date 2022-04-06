@@ -1,19 +1,21 @@
 package model.items;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-
+import java.util.EnumMap;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import model.entities.Entity;
 import model.events.PlayerTurnEnd;
+import util.Originator;
 
-public class Inventory 
+public class Inventory implements Originator
 {
     public static final Inventory TRASH = getInfiniteInventory();
 
     public int gold = 0;
     private int capacity;
     public ArrayList<Bag> bags = new ArrayList<Bag>();
-    public HashMap<EquipTag, Equippable> equipment = new HashMap<EquipTag, Equippable>();
+    public EnumMap<EquipTag, Equippable> equipment = new EnumMap<>(EquipTag.class);
 
     public Inventory(int capacity){
         this.capacity = capacity;
@@ -190,11 +192,37 @@ public class Inventory
         inventory.addItem(Bag.INFINITE_BAG.copy());
         return inventory;
     }
+    
+    public Element createMemento(Document doc){
+        Element element = doc.createElement("inventory");
+        element.setAttribute("gold", Integer.toString(gold));
+        element.setAttribute("capacity", Integer.toString(capacity));
+
+        // List all bags equipped
+        for(Bag bag : bags){
+            Element bagElem = bag.createMemento(doc);
+            // List all items in bag
+            for(Item item : bag.items)
+                bagElem.appendChild(item.createMemento(doc));
+            element.appendChild(bagElem);
+        }
+        
+        // List all equipped items
+        Element equippedElem = doc.createElement("equipment");
+        for(Equippable equippable : equipment.values())
+            equippedElem.appendChild(equippable.createMemento(doc));
+        element.appendChild(equippedElem);
+        return element;
+    }
+
+    public Inventory loadMemento(Element element){
+        return null;
+    }
 
     @Override
     public String toString()
     {
-        String output = "";
+        StringBuilder output = new StringBuilder();
         
         int usedSpace = 0;
         int availableSpace = 0;
@@ -209,18 +237,17 @@ public class Inventory
             value += bag.getValues();
 
             // Print out the bag information
-            output += String.format("Bag #%d: %d/%d used, %d value", (i+1), bag.items.size(), bag.getCapacity(), bag.getValues());
-            output += "\n===========================\n";
+            output.append(String.format("Bag #%d: %d/%d used, %d value", (i+1), bag.items.size(), bag.getCapacity(), bag.getValues()));
+            output.append("\n===========================\n");
 
             // Print out items in the bag
             for(int j = 0; j < bag.items.size(); j++)
             {
                 Item item = bag.items.get(j);
-                output += item.toString() + "\n";
+                output.append(item.toString() + "\n");
             }
         }
 
-        output = String.format("[Inventory: %d/%d used spaces, %s value]%n", usedSpace, availableSpace, value) + output;
-        return output;
+        return  String.format("[Inventory: %d/%d used spaces, %s value]%n", usedSpace, availableSpace, value) + output.toString();
     }
 }

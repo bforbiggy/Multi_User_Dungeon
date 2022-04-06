@@ -1,6 +1,8 @@
 package model.env;
 
 import java.util.Random;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import model.GameObject;
 import model.entities.Entity;
 
@@ -68,8 +70,23 @@ public class Trap implements GameObject
     }
 
     @Override
+    public Element createMemento(Document doc) {
+        Element trapElem = doc.createElement("trap");
+        trapElem.setAttribute("attack", Integer.toString(attack));
+        trapElem.setAttribute("detected", Boolean.toString(detected));
+        trapElem.setAttribute("disabled", Boolean.toString(disabled));
+        return trapElem;
+    }
+
+    @Override
+    public Trap loadMemento(Element element){
+        return this;
+    }
+
+    @Override
     public String toString(){
         if(!detected) return " ";
         return disabled ? "x" : "X";
     }
+    
 }

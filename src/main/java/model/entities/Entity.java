@@ -1,5 +1,7 @@
 package model.entities;
 
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import model.GameObject;
 import model.env.Location;
 import model.items.Inventory;
@@ -12,7 +14,7 @@ public abstract class Entity implements GameObject
     protected Inventory inventory;
     protected Location location;
 
-    public Entity(String name, String description, Stats stats)
+    protected Entity(String name, String description, Stats stats)
     {
         this.name = name;
         this.description = description;
@@ -37,6 +39,21 @@ public abstract class Entity implements GameObject
 
     public int dealDamage(Entity other){
         return other.takeDamage(stats.attack);
+    }
+
+    @Override
+    public Element createMemento(Document doc){
+        Element entityElem = doc.createElement("entity");
+        entityElem.setAttribute("name", name);
+        entityElem.setAttribute("description", description);
+        entityElem.appendChild(stats.createMemento(doc));
+        entityElem.appendChild(inventory.createMemento(doc));
+        return entityElem;
+    }
+
+    @Override
+    public Entity loadMemento(Element element){
+        return this;
     }
 
     public Location getLocation() {

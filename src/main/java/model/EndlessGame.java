@@ -1,6 +1,5 @@
 package model;
 
-import java.util.EnumMap;
 import java.util.Random;
 import java.util.Map.Entry;
 import model.entities.*;
@@ -13,8 +12,9 @@ import util.MapGenerator;
 // Generate empty room on demand when necessary
 public class EndlessGame extends Game {
     private static final Random randy = new Random();
-
     private static int nextExitID = 0;
+
+    private int roomsPassed = 0;
 
     /**
      * Initialization process for the game.
@@ -91,12 +91,13 @@ public class EndlessGame extends Game {
         if (tile != null && tile.content instanceof Exit exit) {
             // If there is no room, generate new room and connect it
             if (exit.getOtherRoom() == null) {
-                EnumMap<Direction, Tile> neighbors = currRoom.getNeighbors();
-                for (Entry<Direction, Tile> entry : neighbors.entrySet()) {
+                // Find the direction associated with exit
+                for (Entry<Direction, Tile> entry : currRoom.getNeighbors().entrySet()) {
                     Direction dir = entry.getKey();
                     Tile exitTile = entry.getValue();
-
                     Exit targetExit = (Exit) exitTile.content;
+
+                    // If direction is found, create room connected from that direction
                     if (exit.equals(targetExit)) {
                         Room room = connectNewRandomRoom(dir, exit);
                         map.rooms.add(room);

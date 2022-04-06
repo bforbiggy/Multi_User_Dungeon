@@ -2,15 +2,17 @@ package model;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import model.entities.*;
 import model.env.*;
 import model.events.*;
 import model.items.*;
-import model.tracking.StatTracker;
-import model.tracking.TrackedStat;
+import model.tracking.*;
+import util.Originator;
 
 // This class acts as model-view AND controller AND view
-public class Game implements PlayerTurnEndListener {
+public class Game implements PlayerTurnEndListener, Originator {
     public enum GameState {
         ONGOING,
         VICTORY,
@@ -240,6 +242,7 @@ public class Game implements PlayerTurnEndListener {
      * @return the array of items in shop
      */
     public Inventory viewShop() {
+        //TODO: ROOM IS CLEAR CHECK
         Tile tile = map.currRoom.getTileAtLocation(player.getLocation());
         if (tile.content instanceof Merchant merchant) {
             return merchant.getInventory();
@@ -255,6 +258,7 @@ public class Game implements PlayerTurnEndListener {
      * @return the item that was bought
      */
     public Item doBuy(int itemIndex) {
+        // TODO: ROOM IS CLEAR CHECK
         Tile tile = map.currRoom.getTileAtLocation(player.getLocation());
         if (tile.content instanceof Merchant merchant) {
             return merchant.buyItem(inventory, itemIndex);
@@ -316,6 +320,18 @@ public class Game implements PlayerTurnEndListener {
             gameState = GameState.VICTORY;
             StatTracker.getTracker().addValue(TrackedStat.GAMES_PLAYED, 1);
         }
+    }
+
+    @Override
+    public Element createMemento(Document doc){
+        Element game = doc.createElement("game");
+        game.appendChild(map.createMemento(doc));
+        return game;
+    }
+
+    @Override
+    public Game loadMemento(Element element){
+        return null;
     }
 
     public Map getMap() {

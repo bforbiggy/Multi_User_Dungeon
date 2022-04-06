@@ -1,15 +1,12 @@
 package model.entities;
 
-public class Stats 
-{
-    public static Stats ZERO = new Stats(0, 0, 0);
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import util.Originator;
 
-    public enum StatNames
-    {
-        HEALTH,
-        ATTACK,
-        DEFENSE
-    }    
+public class Stats implements Originator
+{
+    public static final Stats ZERO = new Stats(0, 0, 0);
 
     public int health;
     public int attack;
@@ -40,7 +37,7 @@ public class Stats
 
     // Ideally, stats contains double values that're converted to integers
     // This way we can multiply stats appropriately
-    public Stats multiply(double multipliers[])
+    public Stats multiply(double[] multipliers)
     {
         health *= multipliers[0];
         attack *= multipliers[1];
@@ -58,6 +55,20 @@ public class Stats
 
     public Stats copy(){
         return new Stats(health, attack, defense);
+    }
+
+    @Override
+    public Element createMemento(Document doc){
+        Element statsElem = doc.createElement("stats");
+        statsElem.setAttribute("health", Integer.toString(health));
+        statsElem.setAttribute("attack", Integer.toString(attack));
+        statsElem.setAttribute("defense", Integer.toString(defense));
+        return statsElem;
+    }
+
+    @Override
+    public Stats loadMemento(Element element){
+        return this;
     }
 
     public String[] toStringArray()

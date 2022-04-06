@@ -1,5 +1,7 @@
 package model.env;
 
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import model.GameObject;
 
 public class Exit implements GameObject
@@ -34,6 +36,18 @@ public class Exit implements GameObject
 
     public Room getOtherRoom() {
         return otherRoom;
+    }
+
+    @Override
+    public Element createMemento(Document doc) {
+        Element exit = doc.createElement("exit");
+        exit.setAttribute("id", Integer.toString(id));
+        return exit;
+    }
+
+    @Override
+    public Exit loadMemento(Element element){
+        return this;
     }
 
     @Override

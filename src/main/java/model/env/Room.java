@@ -3,12 +3,15 @@ package model.env;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.HashSet;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import model.GameObject;
 import model.entities.*;
 import model.events.PlayerTurnEnd;
 import model.events.PlayerTurnEndListener;
+import util.Originator;
 
-public class Room implements PlayerTurnEndListener {
+public class Room implements PlayerTurnEndListener, Originator {
     private static final String[] ROOM_TYPES = {"library", "closet", "hall", "bedroom", "cave", "ruin"};
     private EnumMap<Direction, Tile> neighbors = new EnumMap<>(Direction.class);
     public HashSet<Entity> entities = new HashSet<>();
@@ -151,10 +154,56 @@ public class Room implements PlayerTurnEndListener {
      */
     public Tile findExit(int id) {
         for (Tile exitTile : neighbors.values())
-            if (exitTile.content instanceof Exit exit)
-                if (exit.getId() == id)
-                    return exitTile;
+            if (exitTile.content instanceof Exit exit && exit.getId() == id)
+                return exitTile;
         return null;
+    }
+
+    public boolean isCleared() {
+        for (Tile[] row : tiles)
+            for (Tile tile : row)
+                if (tile.occupant instanceof NPC)
+                    return false;
+        return true;
+    }
+
+
+    public Tile getTileAtLocation(Location loc) {
+        if (!inBounds(loc))
+            return null;
+        return tiles[loc.getY()][loc.getX()];
+    }
+
+    public Tile[][] getTiles() {
+        return tiles;
+    }
+
+    public int getType() {
+        return type;
+    }
+
+    public int getHeight() {
+        return height;
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public String getDesc() {
+        return desc;
+    }
+
+    public EnumMap<Direction, Tile> getNeighbors() {
+        return neighbors;
+    }
+
+    public void setType(int type) {
+        this.type = type;
+    }
+
+    public HashSet<Entity> getEntities() {
+        return entities;
     }
 
     public String generateDesc() {
@@ -198,8 +247,8 @@ public class Room implements PlayerTurnEndListener {
         }
 
         String npcString;
-        if (alive.size() == 0) {
-            if (dead.size() == 0)
+        if (alive.isEmpty()) {
+            if (dead.isEmpty())
                 npcString = "The room is empty. ";
             else
                 npcString = "There is no monster left alive in this room. ";
@@ -217,67 +266,50 @@ public class Room implements PlayerTurnEndListener {
         return output;
     }
 
-    public Tile getTileAtLocation(Location loc) {
-        if (!inBounds(loc))
-            return null;
-        Tile tile = tiles[loc.getY()][loc.getX()];
-        return tile;
+    @Override
+    public Element createMemento(Document doc){
+        Element room = doc.createElement("room");
+        room.setAttribute("type", Integer.toString(type));
+        room.setAttribute("height", Integer.toString(height));
+        room.setAttribute("width", Integer.toString(width));
+        room.setAttribute("desc", desc);
+
+        for (Tile[] row : tiles) {
+            for (Tile tile : row) {
+                room.appendChild(tile.createMemento(doc));
+            }
+        }
+
+        return room;
     }
 
-    public Tile[][] getTiles() {
-        return tiles;
-    }
-
-    public int getType() {
-        return type;
-    }
-
-    public int getHeight() {
-        return height;
-    }
-
-    public int getWidth() {
-        return width;
-    }
-
-    public String getDesc() {
-        return desc;
-    }
-
-    public EnumMap<Direction, Tile> getNeighbors() {
-        return neighbors;
-    }
-
-    public void setType(int type) {
-        this.type = type;
-    }
-
-    public HashSet<Entity> getEntities() {
-        return entities;
+    @Override
+    public Room loadMemento(Element element){
+        return this;
     }
 
     @Override
     public String toString() {
-        String board = "   ";
+        StringBuilder board = new StringBuilder("   ");
 
         // Print out column indexes
         for (int x = 0; x < width; x++)
-            board += String.format(" %d ", x);
-        board += "\n";
+            board.append(String.format(" %d ", x));
+        board.append("\n");
 
         for (int y = 0; y < height; y++) {
             Tile[] tileRow = tiles[y];
-            board += String.format(" %d ", y);
+            board.append(String.format(" %d ", y));
             for (Tile tile : tileRow) {
                 if (tile.occupant != null)
-                    board += String.format("[%s]", tile.occupant);
+                    board.append(String.format("[%s]", tile.occupant));
                 else if (tile.content != null)
-                    board += String.format("[%s]", tile.content);
+                    board.append(String.format("[%s]", tile.content));
                 else
-                    board += "[ ]";
+                    board.append("[ ]");
             }
-            board += "\n";
+            board.append("\n");
         }
-        return board;
+        return board.toString();
     }
 }

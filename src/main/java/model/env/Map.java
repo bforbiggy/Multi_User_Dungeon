@@ -1,10 +1,12 @@
 package model.env;
 
 import java.util.ArrayList;
-
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import model.entities.*;
+import util.Originator;
 
-public class Map 
+public class Map implements Originator
 {
     public Room currRoom;
     public ArrayList<Room> rooms = new ArrayList<>();
@@ -51,5 +53,19 @@ public class Map
                 }
             }
         }
+    }
+
+    @Override
+    public Element createMemento(Document doc) {
+        Element map = doc.createElement("map");
+        for(Room room : rooms){
+            map.appendChild(room.createMemento(doc));
+        }
+        return map;
+    }
+
+    @Override
+    public Object loadMemento(Element memento) {
+        return null;
     }
 }

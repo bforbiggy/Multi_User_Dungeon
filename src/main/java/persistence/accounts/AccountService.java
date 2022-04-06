@@ -1,19 +1,16 @@
 package persistence.accounts;
 
-import java.io.IOException;
 import java.util.EnumMap;
 import java.util.HashMap;
 
 import javax.xml.parsers.*;
-import javax.xml.transform.*;
 
 import org.w3c.dom.*;
-import org.xml.sax.SAXException;
 
 import model.tracking.StatTracker;
 import model.tracking.TrackedStat;
-import util.XMLLoader;
-import util.XMLSaver;
+import util.GameLoader;
+import util.GameSaver;
 
 public class AccountService {
     private HashMap<String, Account> accounts = new HashMap<String, Account>();
@@ -69,7 +66,7 @@ public class AccountService {
                     statElem.setTextContent(statVal.toString());
 
                     // Only add element in value isn't 0
-                    if(statVal != 0)
+                    if (statVal != 0)
                         accountElem.appendChild(statElem);
                 }
 
@@ -79,46 +76,43 @@ public class AccountService {
             document.appendChild(root);
 
             // Writes document to file
-            XMLSaver.writeDocument(document, filePath);
-        } catch (TransformerException| ParserConfigurationException e) {
+            GameSaver.writeDocument(document, filePath);
+        } catch (ParserConfigurationException e) {
             e.printStackTrace();
         }
     }
 
     public static AccountService load(String filePath) {
         AccountService accountService = new AccountService();
-        try {
-            Document doc = XMLLoader.readDocument(filePath);
+        Document doc = GameLoader.readDocument(filePath);
 
-            // Iterate through account nodes
-            NodeList list = doc.getElementsByTagName("account");
-            for (int i = 0; i < list.getLength(); i++) {
-                Node accountNode = list.item(i);
-                if (accountNode instanceof Element accountElem) {
+        // Iterate through account nodes
+        NodeList list = doc.getElementsByTagName("account");
+        for (int i = 0; i < list.getLength(); i++) {
+            Node accountNode = list.item(i);
+            if (accountNode instanceof Element accountElem) {
 
-                    // Parse account username + pass
-                    String username = accountElem.getAttribute("username");
-                    String password = accountElem.getAttribute("password");
+                // Parse account username + pass
+                String username = accountElem.getAttribute("username");
+                String password = accountElem.getAttribute("password");
 
-                    // Parse account statistics
-                    EnumMap<TrackedStat, Integer> accountStats = new EnumMap<TrackedStat, Integer>(TrackedStat.class);
-                    NodeList statNodes = accountElem.getChildNodes();
-                    for (int j = 0; j < statNodes.getLength(); j++) {
-                        Node statNode = statNodes.item(j);
-                        if (statNode.getNodeType() == Node.ELEMENT_NODE) {
-                            TrackedStat stat = TrackedStat.valueOf(statNode.getNodeName());
-                            Integer val = Integer.parseInt(statNode.getTextContent());
-                            accountStats.put(stat, val);
-                        }
+                // Parse account statistics
+                EnumMap<TrackedStat, Integer> accountStats = new EnumMap<TrackedStat, Integer>(
+                        TrackedStat.class);
+                NodeList statNodes = accountElem.getChildNodes();
+                for (int j = 0; j < statNodes.getLength(); j++) {
+                    Node statNode = statNodes.item(j);
+                    if (statNode.getNodeType() == Node.ELEMENT_NODE) {
+                        TrackedStat stat = TrackedStat.valueOf(statNode.getNodeName());
+                        Integer val = Integer.parseInt(statNode.getTextContent());
+                        accountStats.put(stat, val);
                     }
-
-                    // Create account
-                    Account account = new Account(username, password, new StatTracker(accountStats));
-                    accountService.addAccount(account);
                 }
+
+                // Create account
+                Account account = new Account(username, password, new StatTracker(accountStats));
+                accountService.addAccount(account);
             }
-        } catch (ParserConfigurationException | SAXException | IOException e) {
-            e.printStackTrace();
         }
         return accountService;
     }

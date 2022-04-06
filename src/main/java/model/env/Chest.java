@@ -1,6 +1,8 @@
 package model.env;
 
 import java.util.Random;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import model.GameObject;
 import model.items.Bag;
 import model.items.Consumable;
@@ -46,9 +48,20 @@ public class Chest implements GameObject
         return inv;
     }
 
-    public Inventory getInventory()
-    {
+    public Inventory getInventory(){
         return inventory;
+    }
+
+    @Override
+    public Element createMemento(Document doc) {
+        Element chest = doc.createElement("chest");
+        chest.appendChild(inventory.createMemento(doc));
+        return chest;
+    }
+
+    @Override
+    public Chest loadMemento(Element element){
+        return this;
     }
 
     @Override

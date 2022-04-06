@@ -1,5 +1,7 @@
 package model.items;
 
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import model.entities.Entity;
 import model.entities.Stats;
 
@@ -47,5 +49,18 @@ public class Equippable extends Item
 
     public EquipTag getEquipTag(){
         return tag;
+    }
+
+    @Override
+    public Element createMemento(Document doc) {
+        Element itemElem = super.createMemento(doc);
+        itemElem.setAttribute("type", "equippable");
+        itemElem.appendChild(stats.createMemento(doc));
+        return itemElem;
+    }
+
+    @Override
+    public Equippable loadMemento(Element element){
+        return null;
     }
 }
