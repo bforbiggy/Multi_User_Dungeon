@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 import static java.lang.Integer.parseInt;
-
+import model.GameObject;
 import model.entities.*;
 import model.env.*;
 import model.items.*;
@@ -136,10 +136,10 @@ public class CSVLoader {
      * @param tile tile to set data of
      * @param runningList list to read each heavy data object from
      */
-    public static void writeStringToTile(String input, Tile tile, ArrayList<Object> runningList) {
+    public static void writeStringToTile(String input, Tile tile, ArrayList<GameObject> runningList) {
         // Add everything on tile to the tile
         for (String objectString : input.split(FileConstants.VERT_BAR_REGEX)) {
-            Object obj = null;
+            GameObject obj = null;
 
             // Obstacle
             if (objectString.startsWith("O"))
@@ -233,7 +233,7 @@ public class CSVLoader {
             ArrayList<Exit> exits = new ArrayList<Exit>();
 
             // If there's data left, we have more data to parse
-            ArrayList<Object> objects = new ArrayList<Object>();
+            ArrayList<GameObject> objects = new ArrayList<>();
             while (scanner.hasNextLine()) {
                 // Properly parse next chunk according to item data type
                 String dataType = scanner.nextLine();
@@ -283,7 +283,7 @@ public class CSVLoader {
                                 exits.add(exit);
 
                                 Direction direction = Direction.locationToWallDirection(new Location(w,h), width, height);
-                                room.neighbors.put(direction, tile);
+                                room.getNeighbors().put(direction, tile);
                             }
                         }
                     }

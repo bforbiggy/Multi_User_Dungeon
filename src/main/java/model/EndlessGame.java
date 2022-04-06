@@ -1,7 +1,8 @@
 package model;
 
+import java.util.EnumMap;
 import java.util.Random;
-
+import java.util.Map.Entry;
 import model.entities.*;
 import model.env.*;
 import model.events.*;
@@ -53,7 +54,7 @@ public class EndlessGame extends Game {
             Location loc = MapGenerator.getFreeExitLoc(room, dir);
             Tile tile = room.getTileAtLocation(loc);
             tile.setContent(exit);
-            room.neighbors.put(dir, tile);
+            room.getNeighbors().put(dir, tile);
         }
         return room;
     }
@@ -63,7 +64,7 @@ public class EndlessGame extends Game {
 
         // Create exit-related data
         Direction dir = orgDir.getOpposite();
-        Tile exitTile = room.neighbors.get(dir);
+        Tile exitTile = room.getNeighbors().get(dir);
         Exit exit = (Exit) exitTile.content;
 
         // Connect rooms together
@@ -90,8 +91,12 @@ public class EndlessGame extends Game {
         if (tile != null && tile.content instanceof Exit exit) {
             // If there is no room, generate new room and connect it
             if (exit.getOtherRoom() == null) {
-                for (Direction dir : currRoom.neighbors.keySet()) {
-                    Exit targetExit = (Exit) currRoom.neighbors.get(dir).content;
+                EnumMap<Direction, Tile> neighbors = currRoom.getNeighbors();
+                for (Entry<Direction, Tile> entry : neighbors.entrySet()) {
+                    Direction dir = entry.getKey();
+                    Tile exitTile = entry.getValue();
+
+                    Exit targetExit = (Exit) exitTile.content;
                     if (exit.equals(targetExit)) {
                         Room room = connectNewRandomRoom(dir, exit);
                         map.rooms.add(room);

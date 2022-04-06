@@ -1,14 +1,14 @@
 package model.env;
 
 import java.util.Random;
-
+import model.GameObject;
 import model.items.Bag;
 import model.items.Consumable;
 import model.items.Equippable;
 import model.items.Inventory;
 import model.items.Item;
 
-public class Chest
+public class Chest implements GameObject
 {
     private static Random randy = new Random();
     private Inventory inventory;

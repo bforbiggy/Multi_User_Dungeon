@@ -1,10 +1,10 @@
 package model.env;
 
 import java.util.Random;
-
+import model.GameObject;
 import model.entities.Entity;
 
-public class Trap
+public class Trap implements GameObject
 {
     private static Random randy = new Random();
 

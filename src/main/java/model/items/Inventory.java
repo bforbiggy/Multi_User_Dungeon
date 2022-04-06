@@ -220,7 +220,7 @@ public class Inventory
             }
         }
 
-        output = String.format("[Inventory: %d/%d used spaces, %s value]\n", usedSpace, availableSpace, value) + output;
+        output = String.format("[Inventory: %d/%d used spaces, %s value]%n", usedSpace, availableSpace, value) + output;
         return output;
     }
 }

@@ -1,6 +1,8 @@
 package model.env;
 
-public class Obstacle
+import model.GameObject;
+
+public class Obstacle implements GameObject
 {
     private String name;
     private String obsString;

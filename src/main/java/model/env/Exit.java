@@ -1,6 +1,8 @@
 package model.env;
 
-public class Exit
+import model.GameObject;
+
+public class Exit implements GameObject
 {
     private Room curRoom;
     private Room otherRoom;

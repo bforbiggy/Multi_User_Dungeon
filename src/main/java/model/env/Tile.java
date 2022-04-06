@@ -1,11 +1,12 @@
 package model.env;
 
+import model.GameObject;
 import model.entities.Entity;
 import model.entities.Merchant;
 
 public class Tile {
-    public Object occupant;
-    public Object content;
+    public GameObject occupant;
+    public GameObject content;
     private Location location;
 
     public Tile(Location location) {
@@ -21,7 +22,7 @@ public class Tile {
      * This will replace whatever was previously on the tile.
      * @param obj object to add to this tile
      */
-    public void forceAdd(Object obj)
+    public void forceAdd(GameObject obj)
     {
         //TODO: Consider just keeping this in csvloader..
         if(obj instanceof Entity entity)
@@ -38,11 +39,11 @@ public class Tile {
             content = obj;
     }
 
-    public void setContent(Object content){
+    public void setContent(GameObject content){
         this.content = content;
     }
 
-    public void setOccupant(Object occupant) {
+    public void setOccupant(GameObject occupant) {
         this.occupant = occupant;
     }
 

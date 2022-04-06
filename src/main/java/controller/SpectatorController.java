@@ -1,5 +1,6 @@
 package controller;
 
+import java.util.EnumMap;
 import model.Game.GameState;
 import model.env.*;
 
@@ -15,23 +16,24 @@ public class SpectatorController extends Controller {
 
     private void processInput(String input) {
         input = input.toUpperCase();
+        EnumMap<Direction, Tile> neighbors = viewRoom.getNeighbors();
         if (input.equals("W")) {
-            Exit exit = (Exit) viewRoom.neighbors.get(Direction.NORTH).content;
+            Exit exit = (Exit) neighbors.get(Direction.NORTH).content;
             if (exit != null) {
                 viewRoom = exit.getOtherRoom();
             }
         } else if (input.equals("A")) {
-            Exit exit = (Exit) viewRoom.neighbors.get(Direction.WEST).content;
+            Exit exit = (Exit) neighbors.get(Direction.WEST).content;
             if (exit != null) {
                 viewRoom = exit.getOtherRoom();
             }
         } else if (input.equals("S")) {
-            Exit exit = (Exit) viewRoom.neighbors.get(Direction.SOUTH).content;
+            Exit exit = (Exit) neighbors.get(Direction.SOUTH).content;
             if (exit != null) {
                 viewRoom = exit.getOtherRoom();
             }
         } else if (input.equals("D")) {
-            Exit exit = (Exit) viewRoom.neighbors.get(Direction.EAST).content;
+            Exit exit = (Exit) neighbors.get(Direction.EAST).content;
             if (exit != null) {
                 viewRoom = exit.getOtherRoom();
             }

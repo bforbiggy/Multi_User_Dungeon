@@ -1,9 +1,10 @@
 package model.entities;
 
+import model.GameObject;
 import model.env.Location;
 import model.items.Inventory;
 
-public abstract class Entity 
+public abstract class Entity implements GameObject
 {
     protected String name;
     protected String description;

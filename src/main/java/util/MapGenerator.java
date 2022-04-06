@@ -13,7 +13,7 @@ public class MapGenerator {
 
     public static ArrayList<Direction> getFreeDirections(Room room) {
         ArrayList<Direction> freeDirs = new ArrayList<Direction>();
-        Collection<Direction> collection = room.neighbors.keySet();
+        Collection<Direction> collection = room.getNeighbors().keySet();
         for (Direction dir : Direction.values()) {
             if (!collection.contains(dir))
                 freeDirs.add(dir);
@@ -52,7 +52,7 @@ public class MapGenerator {
         start.setContent(startLoc, startExit);
         
         // Use up wall from start room
-        start.neighbors.put(dirToTarget, start.getTileAtLocation(startLoc));
+        start.getNeighbors().put(dirToTarget, start.getTileAtLocation(startLoc));
 
         // Connect end room to start room
         Exit endExit = new Exit(exitId);
@@ -62,7 +62,7 @@ public class MapGenerator {
         end.setContent(endLoc, endExit);
 
         // Use up wall from end room
-        end.neighbors.put(dirToTarget.getOpposite(), end.getTileAtLocation(endLoc));
+        end.getNeighbors().put(dirToTarget.getOpposite(), end.getTileAtLocation(endLoc));
     }
 
     /**
