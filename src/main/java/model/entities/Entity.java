@@ -51,11 +51,6 @@ public abstract class Entity implements GameObject
         return entityElem;
     }
 
-    @Override
-    public Entity loadMemento(Element element){
-        return this;
-    }
-
     public Location getLocation() {
         return location;
     }

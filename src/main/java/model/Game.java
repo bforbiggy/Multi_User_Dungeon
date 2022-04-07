@@ -319,8 +319,12 @@ public class Game implements PlayerTurnEndListener, Originator {
         return game;
     }
 
-    @Override
-    public Game loadMemento(Element element){
+    public static Game loadMemento(Element element){
+        Map map = Map.loadMemento((Element)element.getFirstChild());
+        for(Tile[] row : map.currRoom.getTiles())
+            for(Tile tile : row)
+                if(tile.content instanceof Player player)
+                    return new Game(player, map);
         return null;
     }
 

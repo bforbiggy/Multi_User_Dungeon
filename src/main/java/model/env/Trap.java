@@ -20,6 +20,11 @@ public class Trap implements GameObject
     public Trap(int attackVal) {
         this.attack = attackVal;
     }
+    private Trap(int attackVal, boolean detected, boolean disabled) {
+        this.attack = attackVal;
+        this.disabled = disabled;
+        this.detected = detected;
+    }
 
     /**
      * The action of disarming a trap, native to the trap file
@@ -78,9 +83,11 @@ public class Trap implements GameObject
         return trapElem;
     }
 
-    @Override
-    public Trap loadMemento(Element element){
-        return this;
+    public static Trap loadMemento(Element element){
+        int attack = Integer.parseInt(element.getAttribute("attack"));
+        boolean detected = Boolean.parseBoolean(element.getAttribute("detected"));
+        boolean disabled = Boolean.parseBoolean(element.getAttribute("disabled"));
+        return new Trap(attack, detected, disabled);
     }
 
     @Override

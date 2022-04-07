@@ -215,7 +215,7 @@ public class Inventory implements Originator
         return element;
     }
 
-    public Inventory loadMemento(Element element){
+    public static Inventory loadMemento(Element element){
         return null;
     }
 

@@ -59,9 +59,10 @@ public class Chest implements GameObject
         return chest;
     }
 
-    @Override
-    public Chest loadMemento(Element element){
-        return this;
+    public static Chest loadMemento(Element element){
+        Element inventoryElem = (Element)element.getElementsByTagName("inventory").item(0);
+        Inventory inventory = Inventory.loadMemento(inventoryElem);
+        return new Chest(inventory);
     }
 
     @Override

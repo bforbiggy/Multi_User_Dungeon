@@ -66,9 +66,11 @@ public class Stats implements Originator
         return statsElem;
     }
 
-    @Override
-    public Stats loadMemento(Element element){
-        return this;
+    public static Stats loadMemento(Element element){
+        int health = Integer.parseInt(element.getAttribute("health"));
+        int attack = Integer.parseInt(element.getAttribute("attack"));
+        int defense = Integer.parseInt(element.getAttribute("defense"));
+        return new Stats(health, attack, defense);
     }
 
     public String[] toStringArray()

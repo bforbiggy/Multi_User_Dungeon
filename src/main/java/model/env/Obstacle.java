@@ -29,9 +29,10 @@ public class Obstacle implements GameObject
         return obstacle;
     }
 
-    @Override
-    public Obstacle loadMemento(Element element){
-        return this;
+    public static Obstacle loadMemento(Element element){
+        String name = element.getAttribute("name");
+        String representation = element.getAttribute("representation");
+        return new Obstacle(name, representation);
     }
 
     @Override

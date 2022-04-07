@@ -39,6 +39,15 @@ public class Player extends Entity {
         return entityElem;
     }
 
+    public static Player loadMemento(Element element){
+        String name = element.getAttribute("name");
+        String description = element.getAttribute("description");
+        Stats stats = Stats.loadMemento((Element) element.getElementsByTagName("name").item(0));
+        Inventory inventory = Inventory.loadMemento((Element) element.getElementsByTagName(
+                "inventory").item(0));
+        return new Player(name, description, stats, inventory);
+    }
+
     @Override
     public String toString() {
         return "P";

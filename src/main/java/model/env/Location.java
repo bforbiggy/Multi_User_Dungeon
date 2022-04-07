@@ -28,13 +28,18 @@ public class Location {
     public static double getDistance(Location from, Location to){
         int a = from.getX() - to.getX();
         int b = from.getY() - to.getY();
-        return Math.sqrt(a*a + b*b);
+        return Math.sqrt((double)a*a + b*b);
     }
 
     @Override
-    public boolean equals(Object o){
-        if(this.x == ((Location) o).getX() && this.y == ((Location) o).getY()){
-            return true;
+    public int hashCode(){
+        return Integer.hashCode(x) * Integer.hashCode(y);
+    }
+    
+    @Override
+    public boolean equals(Object obj){
+        if(obj instanceof Location other){
+            return other.getX() == getX() && other.getY() == getY();
         }
         return false;
     }

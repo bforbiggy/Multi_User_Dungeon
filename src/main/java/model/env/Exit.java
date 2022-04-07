@@ -45,9 +45,9 @@ public class Exit implements GameObject
         return exit;
     }
 
-    @Override
-    public Exit loadMemento(Element element){
-        return this;
+    public static Exit loadMemento(Element element){
+        int id = Integer.parseInt(element.getAttribute("id"));
+        return new Exit(id);
     }
 
     @Override

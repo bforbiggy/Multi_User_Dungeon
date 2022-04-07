@@ -2,6 +2,7 @@ package model;
 
 import java.util.Random;
 import java.util.Map.Entry;
+import org.w3c.dom.Element;
 import model.entities.*;
 import model.env.*;
 import model.events.*;
@@ -22,7 +23,6 @@ public class EndlessGame extends Game {
      * Initialization process for the game.
      * 
      * @param player Player
-     * @param map Map
      */
     public EndlessGame(Player player) {
         this.player = player;
@@ -42,6 +42,23 @@ public class EndlessGame extends Game {
         Location center = new Location(room.getWidth() / 2, room.getHeight() / 2);
         room.setOccupant(center, player);
         player.setLocation(center);
+
+        roomChange(map.currRoom);
+    }
+
+    /**
+     * Initialization process for the game.
+     * 
+     * @param player Player
+     * @param map Map
+     */
+    private EndlessGame(Player player, Map map) {
+        this.player = player;
+        this.inventory = this.player.getInventory();
+        this.map = map;
+
+        dayCycle = new DayCycle();
+        playerTurnEnd = new PlayerTurnEnd(this);
 
         roomChange(map.currRoom);
     }
@@ -77,7 +94,8 @@ public class EndlessGame extends Game {
         exit.setID(orgExit.getId());
 
         // Generate room contents and shrine for roughly 1-in-10 rooms
-        if(randy.nextInt(10) == 0){
+        //TODO: RESET VALUE TO 10
+        if(randy.nextInt(2) == 0){
             int x = randy.nextInt(room.getWidth()-2)+1;
             int y = randy.nextInt(room.getHeight()-2)+1;
             Shrine shrine = new Shrine();
@@ -95,13 +113,25 @@ public class EndlessGame extends Game {
             lastShrine = shrine;
         }
     }
+
+    public static EndlessGame loadMemento(Element element) {
+        Map map = Map.loadMemento((Element) element.getFirstChild());
+        for (Tile[] row : map.currRoom.getTiles())
+            for (Tile tile : row)
+                if (tile.content instanceof Player player)
+                    return new EndlessGame(player, map);
+        return null;
+    }
     
     @Override
     public void onPlayerTurnEnd(PlayerTurnEnd playerTurnEnd){
         if(player.isDead()){
             // If shrine was used, return game to saved state
             if(lastShrine != null)
-                loadMemento(lastShrine.getGameMemento());
+            {
+                // TODO: DO NOT LOAD NEW GAME, INSTEAD LOAD MAP + PLAYER
+                Element gameDoc = lastShrine.getGameMemento();
+            }
             // Otherwise, resume normal game logic
             else
                 super.onPlayerTurnEnd(playerTurnEnd);

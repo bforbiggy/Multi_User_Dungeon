@@ -137,7 +137,19 @@ public class NPC extends Entity implements DayCycleListener, PlayerTurnEndListen
     public Element createMemento(Document doc) {
         Element entityElem = super.createMemento(doc);
         entityElem.setAttribute("type", "player");
+        entityElem.setAttribute("diurnal", String.valueOf(diurnal));
+
         return entityElem;
+    }
+
+    public static NPC loadMement(Element element){
+        String name = element.getAttribute("name");
+        String description = element.getAttribute("description");
+        Stats stats = Stats.loadMemento((Element) element.getElementsByTagName("name").item(0));
+        Inventory inventory = Inventory.loadMemento((Element) element.getElementsByTagName(
+                "inventory").item(0));
+        boolean diurnal = Boolean.parseBoolean(element.getAttribute("diurnal"));
+        return new NPC(name, description, stats, diurnal, inventory);
     }
     
     @Override

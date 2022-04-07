@@ -32,13 +32,11 @@ public class Shrine implements GameObject {
 
     @Override
     public Element createMemento(Document doc) {
-        Element elem = doc.createElement("shrine");
-        return elem;
+        return doc.createElement("shrine");
     }
 
-    @Override
-    public Object loadMemento(Element memento) {
-        return this;
+    public Shrine loadMemento(Element memento) {
+        return new Shrine();
     }
 
     @Override

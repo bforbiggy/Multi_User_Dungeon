@@ -5,6 +5,8 @@ import java.util.EnumMap;
 import java.util.HashSet;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import model.GameObject;
 import model.entities.*;
 import model.events.PlayerTurnEnd;
@@ -12,7 +14,7 @@ import model.events.PlayerTurnEndListener;
 import util.Originator;
 
 public class Room implements PlayerTurnEndListener, Originator {
-    private static final String[] ROOM_TYPES = {"library", "closet", "hall", "bedroom", "cave", "ruin"};
+    //private static final String[] ROOM_TYPES = {"library", "closet", "hall", "bedroom", "cave", "ruin"};
     private EnumMap<Direction, Tile> neighbors = new EnumMap<>(Direction.class);
     public HashSet<Entity> entities = new HashSet<>();
 
@@ -220,7 +222,7 @@ public class Room implements PlayerTurnEndListener, Originator {
             length = "regular";
 
         // Determine room size
-        double area = height * width;
+        int area = height * width;
         String size;
         if (area >= 32)
             size = "large";
@@ -269,25 +271,45 @@ public class Room implements PlayerTurnEndListener, Originator {
 
     @Override
     public Element createMemento(Document doc){
-        Element room = doc.createElement("room");
-        room.setAttribute("type", Integer.toString(type));
-        room.setAttribute("height", Integer.toString(height));
-        room.setAttribute("width", Integer.toString(width));
-        room.setAttribute("desc", desc);
+        Element roomElem = doc.createElement("room");
+        roomElem.setAttribute("type", Integer.toString(type));
+        roomElem.setAttribute("height", Integer.toString(height));
+        roomElem.setAttribute("width", Integer.toString(width));
+        roomElem.setAttribute("desc", desc);
 
         for (Tile[] row : tiles) {
             for (Tile tile : row) {
-                if(tile.content != null || tile.occupant != null)
-                    room.appendChild(tile.createMemento(doc));
+                roomElem.appendChild(tile.createMemento(doc));
             }
         }
 
-        return room;
+        return roomElem;
     }
 
-    @Override
-    public Room loadMemento(Element element){
-        return this;
+    public static Room loadMemento(Element element){
+        // Creates template room
+        int type = Integer.parseInt(element.getAttribute("type"));
+        int width = Integer.parseInt(element.getAttribute("width"));
+        int height = Integer.parseInt(element.getAttribute("height"));
+        Room room = new Room(height, width, type);
+
+        // Iterates throgh all room node's children nodes
+        NodeList roomNodes = element.getChildNodes();
+        for (int i = 0; i < roomNodes.getLength(); i++) {
+            Node tileNode = roomNodes.item(i);
+            if (tileNode instanceof Element tileElem) {
+                // Load tile node as tile
+                Tile tile = Tile.loadMemento(tileElem);
+                Location loc = tile.getLocation();
+
+                // If tile contains entity, update its location
+                if(tile.occupant instanceof Entity entity)
+                    entity.setLocation(loc);
+                if(tile.content instanceof Entity entity)
+                    entity.setLocation(loc);
+            }
+        }
+        return room;
     }
 
     @Override
