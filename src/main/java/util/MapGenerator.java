@@ -103,9 +103,8 @@ public class MapGenerator {
     }
 
     /**
-     * Given a blank room, procedurally add things to the room.
+     * Given a room, procedurally add things to the room. Avoids overriding existing objects.
      * This includes all items that belong in rooms (Chest, NPCs, Traps, etc.)
-     * except the player
      * 
      * @param room Blank room
      */

@@ -217,18 +217,8 @@ public class Game implements PlayerTurnEndListener, Originator {
      * @param itemIndex the item index of target item in bag
      */
     public void doLoot(int bagIndex, int itemIndex) {
-        Inventory inv = viewLoot();
-
-        // Access inventory of current tile contents
-        // Room currRoom = map.currRoom;
-        // Tile tile = currRoom.getTileAtLocation(player.getLocation());
-        // if (tile.content instanceof Chest chest && tile.content instanceof Entity entity && tile.content != player) {
-        //     inv = chest.getInventory();
-        // } else if (tile.content instanceof Entity entity && tile.content != player) {
-        //     inv = entity.getInventory();
-        // }
-
         // If inventory could be accessed, loot gold and item if possible
+        Inventory inv = viewLoot();
         if (inv != null) {
             Item item = inv.getItem(bagIndex, itemIndex);
             if (item != null)

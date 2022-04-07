@@ -20,7 +20,8 @@ public class Room implements PlayerTurnEndListener, Originator {
     private int height;
     private int width;
 
-    private int type; // 0 = default, 1 = start, 2 = exit
+    /** 0 = default, 1 = start, 2 = exit */
+    private int type;
     private String desc;
 
     // Generates an empty room given a room size, room sizes are squared

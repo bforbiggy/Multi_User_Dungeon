@@ -5,7 +5,8 @@ import java.util.Map.Entry;
 import model.entities.*;
 import model.env.*;
 import model.events.*;
-
+import model.tracking.StatTracker;
+import model.tracking.TrackedStat;
 import util.MapGenerator;
 
 // Create initial room with exits that have null destinations
@@ -14,7 +15,8 @@ public class EndlessGame extends Game {
     private static final Random randy = new Random();
     private static int nextExitID = 0;
 
-    private int roomsPassed = 0;
+    private int roomsPassed;
+    private Shrine lastShrine;
 
     /**
      * Initialization process for the game.
@@ -32,6 +34,7 @@ public class EndlessGame extends Game {
         // Create endless map starting room
         map = new Map();
         Room room = createRoom();
+        room.setType(1);
         map.rooms.add(room);
         map.currRoom = room;
 
@@ -73,8 +76,45 @@ public class EndlessGame extends Game {
         exit.connectRoom(orgExit.getCurRoom());
         exit.setID(orgExit.getId());
 
+        // Generate room contents and shrine for roughly 1-in-10 rooms
+        if(randy.nextInt(10) == 0){
+            int x = randy.nextInt(room.getWidth()-2)+1;
+            int y = randy.nextInt(room.getHeight()-2)+1;
+            Shrine shrine = new Shrine();
+            room.setContent(new Location(x,y), shrine);
+        }
         MapGenerator.generateRoomContents(room);
         return room;
+    }
+
+    public void useShrine(){
+        // If a shrine can be found, use it to save game state
+        Tile tile = map.currRoom.getTileAtLocation(player.getLocation());
+        if(tile.content instanceof Shrine shrine){
+            shrine.use(this);
+            lastShrine = shrine;
+        }
+    }
+    
+    @Override
+    public void onPlayerTurnEnd(PlayerTurnEnd playerTurnEnd){
+        if(player.isDead()){
+            // If shrine was used, return game to saved state
+            if(lastShrine != null)
+                loadMemento(lastShrine.getGameMemento());
+            // Otherwise, resume normal game logic
+            else
+                super.onPlayerTurnEnd(playerTurnEnd);
+        }
+    }
+
+    @Override
+    public void finishGame() {
+        // Endless Game can end at start room
+        if (map.currRoom.getType() != 0) {
+            gameState = GameState.VICTORY;
+            StatTracker.getTracker().addValue(TrackedStat.GAMES_PLAYED, 1);
+        }
     }
 
     /**
@@ -105,8 +145,23 @@ public class EndlessGame extends Game {
                 }
             }
 
+            // Move player to new room
             roomChange(exit.getOtherRoom());
             map.entityUseExit(player, exit);
+
+            // Respawn dead enemies in all rooms
+            roomsPassed++;
+            if (roomsPassed % 5 == 0) {
+                for (Room room : map.rooms) {
+                    for(Entity entity : room.getEntities()){
+                        // If NPC is dead, "respawn" NPC by healing it so it is alive again
+                        if(entity.isDead() && entity instanceof NPC npc){
+                            entity.getStats().health = randy.nextInt(151-50)+50;
+                            playerTurnEnd.addListener(npc);
+                        }
+                    }
+                }
+            }
             return true;
         }
 

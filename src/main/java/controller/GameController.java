@@ -1,7 +1,7 @@
 package controller;
 
 import java.util.Scanner;
-
+import model.EndlessGame;
 import model.Game;
 import model.entities.Player;
 import model.env.Location;
@@ -133,6 +133,9 @@ public class GameController extends Controller {
         // Finish game
         else if (tokens[0].equals("FINISH"))
             game.finishGame();
+        // Use shrine
+        else if(tokens[0].equals("SHRINE") && game instanceof EndlessGame endlessGame)
+            endlessGame.useShrine();
         else
             System.out.println("You entered an incorrect input! Please try again.");
     }
