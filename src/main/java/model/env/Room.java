@@ -276,7 +276,8 @@ public class Room implements PlayerTurnEndListener, Originator {
 
         for (Tile[] row : tiles) {
             for (Tile tile : row) {
-                room.appendChild(tile.createMemento(doc));
+                if(tile.content != null || tile.occupant != null)
+                    room.appendChild(tile.createMemento(doc));
             }
         }
 

@@ -9,8 +9,8 @@
     <account password="9h9hg9eh" username="lol"/>
     <account password="password" username="admin"/>
     <account password="pass" username="user">
-        <GAMES_PLAYED>2</GAMES_PLAYED>
-        <LIVES_LOST>1</LIVES_LOST>
+        <GAMES_PLAYED>3</GAMES_PLAYED>
+        <LIVES_LOST>2</LIVES_LOST>
         <MONSTERS_SLAIN>1</MONSTERS_SLAIN>
         <ITEMS_FOUND>3</ITEMS_FOUND>
     </account>
