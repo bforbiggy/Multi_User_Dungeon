@@ -153,8 +153,7 @@ public class Bag extends Item implements Iterable<Item>
         return new Bag(name, description, value, capacity);
     }
 
-    @Override
-    public Bag clone() {
+    public Bag copy() {
         return new Bag(name, description, value, capacity);
     }
 }

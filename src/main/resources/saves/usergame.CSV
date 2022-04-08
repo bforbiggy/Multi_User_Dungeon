@@ -1,0 +1,91 @@
+PLAYER
+ada,aierhjareiu,100,10,0
+
+B.Bag of poggers.This bag is so poggers omg!!!!! yassss!!!.5.6
+
+MERCHANT
+sussy merchant,Think carefully before buying from this sussy merchant...,1,1,1
+E.swaggalicious ARMOR of smiling.I sure do hope this ARMOR of smiling doesn't debuff me like crazy!.13.8.1.4.ARMOR,E.awesome ARMOR of escaping.I sure do hope this ARMOR of escaping doesn't debuff me like crazy!.15.5.2.4.ARMOR,E.awesome WEAPON of escaping.I sure do hope this WEAPON of escaping doesn't debuff me like crazy!.16.9.1.1.WEAPON
+ROOM
+3,3,1,A small square room has 1 exit(s). The room has no monsters.
+0,I1,I2
+0,0,0
+0,E1,0
+NPC
+fast gremlin,I don't know about you but this gremlin sure is fast,133,12,4,false
+E.epic ARMOR of escaping.I sure do hope this ARMOR of escaping doesn't debuff me like crazy!.28.6.3.1.ARMOR
+NPC
+fast unicorn,I don't know about you but this unicorn sure is fast,109,8,10,false
+
+ROOM
+7,7,0,A large square room has 2 exit(s). With 0 monsters dead, you see the following: a [fast gremlin, fast unicorn]
+T8,0,0,0,E1,0,0
+0,0,0,0,0,0,0
+0,O,0,O,O,O,O
+0,O,0,0,0,I1,E2
+0,0,O,T7,0,0,0
+T8,0,O,O,O,0,0
+0,0,0,0,0,0,I2
+NPC
+stupid gremlin,I don't know about you but this gremlin sure is stupid,138,13,8,false
+I.zany kneecap of programming.So you mean to tell me this kneecap can programming? Ain't no way!.1
+ROOM
+5,5,0,A medium square room has 3 exit(s). With 0 monsters dead, you see the following: a [stupid gremlin]
+0,0,T8,0,E4
+E2,O,0,0,0
+0,O,O,0,0
+0,0,0,0,T6
+I1,0,E3,0,0
+CHEST
+E.poggers ARMOR of programming.I sure do hope this ARMOR of programming doesn't debuff me like crazy!.29.9.2.2.ARMOR,C.awesome juice of smiling.Chug jug this juice to smiling!!.12.4.0.2.5,I.swaggalicious token of kicking.So you mean to tell me this token can kicking? Ain't no way!.19
+ROOM
+4,4,0,A small square room has 1 exit(s). There are 1 chest(s). The room has no monsters.
+0,E3,0,T6
+0,0,O,0
+0,O,O,0
+0,0,0,I1
+NPC
+fast unicorn,I don't know about you but this unicorn sure is fast,66,6,6,true
+E.awesome WEAPON of smiling.I sure do hope this WEAPON of smiling doesn't debuff me like crazy!.29.9.4.3.WEAPON
+NPC
+stupid frog,I don't know about you but this frog sure is stupid,142,14,4,true
+
+ROOM
+6,6,0,A large square room has 3 exit(s). With 0 monsters dead, you see the following: a [fast unicorn, stupid frog]
+0,E6,0,0,0,I1
+0,0,T8,O,0,0
+0,O,O,O,0,E5
+0,O,O,O,0,0
+0,0,0,0,0,I2
+0,0,0,E4,0,0
+CHEST
+C.epic liquid hydrogen of escaping.Chug jug this liquid hydrogen to escaping!!.8.4.0.4.5,I.swaggalicious marker of kicking.So you mean to tell me this marker can kicking? Ain't no way!.4,E.awesome ARMOR of smiling.I sure do hope this ARMOR of smiling doesn't debuff me like crazy!.31.7.3.2.ARMOR
+CHEST
+I.swaggalicious kneecap of programming.So you mean to tell me this kneecap can programming? Ain't no way!.18,I.zany bones of smiling.So you mean to tell me this bones can smiling? Ain't no way!.14
+NPC
+stupid ogre,I don't know about you but this ogre sure is stupid,76,15,0,true
+
+ROOM
+5,5,0,A medium square room has 1 exit(s). There are 2 chest(s). With 0 monsters dead, you see the following: a [stupid ogre]
+T4,I1,O,I2,0
+0,0,O,0,0
+0,O,O,O,0
+0,0,0,0,0
+0,0,E6,0,I3
+ROOM
+5,5,0,A medium square room has 2 exit(s). The room has no monsters.
+0,0,0,0,0
+E5,0,T9,0,0
+O,O,O,O,0
+0,O,0,0,0
+0,0,E7,0,0
+NPC
+God,A huge figure against the wall,150,15,10,true
+E.thunderbolt.DUNK FOR THE THROAT.10000.0.50.0.WEAPON
+ROOM
+5,5,2,A medium square room has 1 exit(s). With 0 monsters dead, you see the following: a [God]
+0,O,E7,O,0
+0,O,0,O,0
+O,O,0,O,O
+0,0,0,0,0
+0,O,I1,O,0

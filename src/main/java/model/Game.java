@@ -54,15 +54,15 @@ public class Game implements PlayerTurnEndListener, Originator {
             // Convert player into a corpse
             NPC corpse = new NPC(player.getName(), player.getDescription(), new Stats(0, 0, 0),
                     true, new Inventory(1));
-            corpse.getInventory().addItem(Bag.INFINITE_BAG.clone());
+            corpse.getInventory().addItem(Bag.INFINITE_BAG.copy());
 
             // Transfer all items to corpse
             ArrayList<Item> itemsLeft = new ArrayList<Item>();
-            for (Bag bag : player.getInventory().bags)
+            for (Bag bag : player.getInventory())
                 for (Item item : bag)
                     itemsLeft.add(item);
             for (Item item : itemsLeft)
-                Inventory.TransferItem(player.getInventory(), corpse.getInventory(), item);
+                Inventory.transferItem(player.getInventory(), corpse.getInventory(), item);
 
             // Replace player at tile with corpse
             Tile tile = map.currRoom.getTileAtLocation(player.getLocation());
@@ -177,12 +177,10 @@ public class Game implements PlayerTurnEndListener, Originator {
 
         // If there is an lootable object at target location, grab its inventory
         Inventory inv = null;
-        if (tile.content instanceof Chest chest) {
+        if (tile.content instanceof Chest chest)
             inv = chest.getInventory();
-        }
-        else if (tile.content instanceof Entity entity) {
+        else if (tile.content instanceof Entity entity && !(entity instanceof Merchant)) 
             inv = entity.getInventory();
-        }
 
         if (inv != null) {
             StatTracker tracker = StatTracker.getTracker();
@@ -194,7 +192,7 @@ public class Game implements PlayerTurnEndListener, Originator {
 
             // Track number of new items discovered
             if (lootedInventories.add(inv)) {
-                for (Bag bag : inventory.bags)
+                for (Bag bag : inventory)
                     tracker.addValue(TrackedStat.ITEMS_FOUND, bag.size());
             }
         }
@@ -215,7 +213,7 @@ public class Game implements PlayerTurnEndListener, Originator {
         if (inv != null) {
             Item item = inv.getItem(bagIndex, itemIndex);
             if (item != null)
-                Inventory.TransferItem(inv, player.getInventory(), item);
+                Inventory.transferItem(inv, player.getInventory(), item);
         }
     }
 
@@ -225,10 +223,11 @@ public class Game implements PlayerTurnEndListener, Originator {
      * @return the array of items in shop
      */
     public Inventory viewShop() {
-        // TODO: ROOM IS CLEAR CHECK
-        Tile tile = map.currRoom.getTileAtLocation(player.getLocation());
-        if (tile.content instanceof Merchant merchant) {
-            return merchant.getInventory();
+        if (map.currRoom.isCleared()) {
+            Tile tile = map.currRoom.getTileAtLocation(player.getLocation());
+            if (tile.content instanceof Merchant merchant) {
+                return merchant.getInventory();
+            }
         }
         return null;
     }
@@ -240,10 +239,11 @@ public class Game implements PlayerTurnEndListener, Originator {
      * @return the item that was bought
      */
     public Item doBuy(int itemIndex) {
-        // TODO: ROOM IS CLEAR CHECK
-        Tile tile = map.currRoom.getTileAtLocation(player.getLocation());
-        if (tile.content instanceof Merchant merchant) {
-            return merchant.buyItem(inventory, itemIndex);
+        if (map.currRoom.isCleared()) {
+            Tile tile = map.currRoom.getTileAtLocation(player.getLocation());
+            if (tile.content instanceof Merchant merchant) {
+                return merchant.buyItem(inventory, itemIndex);
+            }
         }
         return null;
     }
@@ -256,11 +256,13 @@ public class Game implements PlayerTurnEndListener, Originator {
      * @return the item that was sold
      */
     public boolean doSell(int bagIndex, int itemIndex) {
-        Item item = inventory.getItem(bagIndex, itemIndex);
-        Tile tile = map.currRoom.getTileAtLocation(player.getLocation());
-        if (tile.content instanceof Merchant merchant) {
-            merchant.sellItem(inventory, item);
-            return true;
+        if (map.currRoom.isCleared()) {
+            Item item = inventory.getItem(bagIndex, itemIndex);
+            Tile tile = map.currRoom.getTileAtLocation(player.getLocation());
+            if (tile.content instanceof Merchant merchant) {
+                merchant.sellItem(inventory, item);
+                return true;
+            }
         }
         return false;
     }
@@ -289,11 +291,7 @@ public class Game implements PlayerTurnEndListener, Originator {
     }
 
     public void swapBags(int oldBagIndex, int bagIndex, int itemIndex) {
-        Item item = inventory.getItem(bagIndex, itemIndex);
-        if (item instanceof Bag newBag) {
-            Bag oldBag = inventory.bags.get(oldBagIndex);
-            Bag.swapItems(oldBag, newBag);
-        }
+        inventory.swapBags(oldBagIndex, bagIndex, itemIndex);
     }
 
     public void finishGame() {
@@ -322,8 +320,7 @@ public class Game implements PlayerTurnEndListener, Originator {
             }
         }
 
-        dayCycle.stop();
-        dayCycle = new DayCycle();
+        dayCycle.reset();
         playerTurnEnd = new PlayerTurnEnd(this);
         playerTurnEnd.addListener(this);
         roomChange(map.currRoom);

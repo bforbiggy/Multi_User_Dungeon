@@ -51,6 +51,16 @@ public abstract class Entity implements GameObject
         return entityElem;
     }
 
+    public static Entity convertMemento(Element element){
+        if (element.getAttribute("type").equalsIgnoreCase(NPC.class.getSimpleName()))
+            return NPC.convertMemento(element);
+        if (element.getAttribute("type").equalsIgnoreCase(Merchant.class.getSimpleName()))
+            return Merchant.convertMemento(element);
+        if (element.getAttribute("type").equalsIgnoreCase(Player.class.getSimpleName()))
+            return Player.convertMemento(element);
+        return null;
+    }
+
     public Location getLocation() {
         return location;
     }

@@ -25,7 +25,7 @@ public class NPC extends Entity implements DayCycleListener, PlayerTurnEndListen
 
         diurnal = randy.nextBoolean();
         inventory = new Inventory(1);
-        inventory.addItem(Bag.INFINITE_BAG.clone());
+        inventory.addItem(Bag.INFINITE_BAG.copy());
     }
 
     public NPC(String name, String description, Stats stats, boolean diurnal, Inventory inventory)
@@ -92,7 +92,7 @@ public class NPC extends Entity implements DayCycleListener, PlayerTurnEndListen
 
     public static Inventory generateLoot() {
         Inventory inv = new Inventory(1);
-        inv.addItem(Bag.INFINITE_BAG.clone());
+        inv.addItem(Bag.INFINITE_BAG.copy());
 
         // Randomly generate 0-2 items
         for (int i = 0; i < randy.nextInt(3); i++) {

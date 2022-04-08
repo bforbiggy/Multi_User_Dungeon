@@ -1,10 +1,11 @@
 package controller;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FilenameFilter;
 import java.util.Arrays;
 import java.util.List;
-
+import java.util.Scanner;
 import model.*;
 import model.entities.Player;
 import model.env.Map;
@@ -13,6 +14,8 @@ import model.tracking.TrackedStat;
 import persistence.FileConstants;
 import persistence.accounts.*;
 import util.CSVLoader;
+import util.GameFormat;
+import util.GameLoader;
 import util.TextLoader;
 
 public class MenuController extends Controller {
@@ -27,6 +30,7 @@ public class MenuController extends Controller {
     private List<File> maps;
 
     private Account account;
+    private Game game;
     private Player player;
     private Map map;
 
@@ -38,8 +42,17 @@ public class MenuController extends Controller {
 
         // Loads in map files
         File targetFolder = new File(FileConstants.ASSETS_PATH);
-        FilenameFilter filter = (file, name) -> name.endsWith(".map");
+        FilenameFilter filter = (file, name) -> name.endsWith("xml") || name.endsWith("csv") || name
+                .endsWith("json");
         maps = Arrays.asList(targetFolder.listFiles(filter));
+    }
+
+    public static Player requestPlayer() {
+        System.out.println("Please give your Player's name:");
+        String name = scanner.nextLine();
+        System.out.println("Please give a basic description about them: ");
+        String description = scanner.nextLine();
+        return new Player(name, description, Player.DEFAULT_STATS.copy());
     }
 
     public void processInput(String input) {
@@ -78,7 +91,8 @@ public class MenuController extends Controller {
         else if (tokens[0].equals("HISTORY") && account != null) {
             System.out.println("[Player History]");
             for (TrackedStat stat : TrackedStat.values()) {
-                System.out.println(String.format("%s: %d", stat.name(), account.getTracker().getValue(stat)));
+                System.out.println(String.format("%s: %d", stat.name(), account.getTracker()
+                        .getValue(stat)));
             }
         }
         // View available maps
@@ -91,44 +105,41 @@ public class MenuController extends Controller {
         }
         // Play/spectate map of choice
         else if (tokens[0].equals("START") && tokens.length >= 2) {
-            // Ask player for their name and description if unavailable
-            if (account != null && player == null) {
-                System.out.println(
-                        "You chose to start a new adventure\nPlease give your Player's name:");
-                String name = scanner.nextLine();
-                System.out.println("Please give a basic description about them: ");
-                String description = scanner.nextLine();
-                this.player = new Player(name, description, Player.DEFAULT_STATS.copy());
+            File mapFile = maps.get(Integer.parseInt(tokens[1])-1);
+
+            // If there is no account, then we are spectating map
+            if (account == null) {
+                try {
+                    map = CSVLoader.loadMap(new Scanner(mapFile));
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                }
+                state = State.SPECTATE;
             }
-
-            map = CSVLoader.loadMap(player, FileConstants.ASSETS_PATH + "map" + tokens[1] + ".map");
-            System.out.println("Successfully loaded map" + tokens[1] + ".map!");
-
-            state = account == null ? State.SPECTATE : State.NEW;
+            // There is an account, so we start new game
+            else if (player == null) {
+                player = MenuController.requestPlayer();
+                game = GameLoader.loadNewGame(mapFile, player);
+                state = State.NEW;
+            }
         }
         // Join endless game (creating it if it doesn't exist)
         else if (tokens[0].equals("ENDLESS")) {
             // Ask player for their name and description
-            System.out.println(
-                    "You chose to start a new adventure\nPlease give your Player's name:");
-            String name = scanner.nextLine();
-            System.out.println("Please give a basic description about them: ");
-            String description = scanner.nextLine();
-            this.player = new Player(name, description, Player.DEFAULT_STATS.copy());
+            player = MenuController.requestPlayer();
             state = State.ENDLESS;
         }
         // Continue from a save
         else if (tokens[0].equals("CONTINUE") && account != null) {
-            player = CSVLoader.loadPlayer(FileConstants.SAVE_FOLDER_PATH + account.getUsername() + "player.csv");
-            map = CSVLoader.loadMap(player, FileConstants.SAVE_FOLDER_PATH + account.getUsername() + "map.csv");
+            File file = new File(FileConstants.SAVE_FOLDER_PATH + account.getUsername() +
+                    "game." + GameFormat.CSV);
+            game = GameLoader.loadGame(file);
             state = State.CONTINUE;
         }
     }
 
     public Controller run() {
-        player = null;
-        map = null;
-        state = null;
+        reset();
         accountService.save(FileConstants.ACCOUNT_PATH);
         while (true) {
             // Prints out different menus depending on whether user is logged in
@@ -140,14 +151,21 @@ public class MenuController extends Controller {
 
             // Changes controller once we are moving out of the menu
             if (state == State.CONTINUE || state == State.NEW) {
-                Game game = new Game(player, map);
                 return new GameController(account, game);
-            } else if (state == State.SPECTATE) {
+            }
+            else if (state == State.SPECTATE) {
                 return new SpectatorController(map);
-            } else if (state == State.ENDLESS) {
-                EndlessGame game = new EndlessGame(player);
+            }
+            else if (state == State.ENDLESS) {
+                game = new EndlessGame(player);
                 return new GameController(account, game);
             }
         }
+    }
+
+    public void reset() {
+        player = null;
+        map = null;
+        state = null;
     }
 }

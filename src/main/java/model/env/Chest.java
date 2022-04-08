@@ -18,7 +18,7 @@ public class Chest implements GameObject
     public Chest()
     {
         inventory = new Inventory(1);
-        inventory.addItem(Bag.INFINITE_BAG.clone());
+        inventory.addItem(Bag.INFINITE_BAG.copy());
     }
 
     public Chest(Inventory inventory) {
@@ -28,7 +28,7 @@ public class Chest implements GameObject
     public static Inventory generateLoot()
     {
         Inventory inv = new Inventory(1);
-        inv.addItem(Bag.INFINITE_BAG.clone());
+        inv.addItem(Bag.INFINITE_BAG.copy());
 
         // Randomly generate 1-5 items
         for(int i = 0; i < randy.nextInt(5-1)+1; i++)

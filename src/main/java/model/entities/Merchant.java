@@ -33,7 +33,7 @@ public class Merchant extends Entity{
             if(item != null && buyerInventory.gold >= item.getValue())
             {
                 buyerInventory.gold -= item.getValue();
-                Inventory.TransferItem(inventory, buyerInventory, item);
+                Inventory.transferItem(inventory, buyerInventory, item);
                 return item;
             }
         }
@@ -49,7 +49,7 @@ public class Merchant extends Entity{
      * @return whether or not item was successfully sold
      */
     public boolean sellItem(Inventory sellerInventory, Item item){
-        if(Inventory.TransferItem(sellerInventory, Inventory.TRASH, item))
+        if(Inventory.transferItem(sellerInventory, Inventory.TRASH, item))
         {
             sellerInventory.gold += item.getValue() * SELL_RATE;
             return true;

@@ -7,7 +7,7 @@ import model.env.*;
 public class SpectatorController extends Controller {
     private Room viewRoom;
     private Map map;
-    private GameState gameState = GameState.ONGOING;
+    private boolean quit = false;
 
     public SpectatorController(Map map) {
         this.map = map;
@@ -18,27 +18,27 @@ public class SpectatorController extends Controller {
         input = input.toUpperCase();
         EnumMap<Direction, Tile> neighbors = viewRoom.getNeighbors();
         if (input.equals("W")) {
-            Exit exit = (Exit) neighbors.get(Direction.NORTH).content;
-            if (exit != null) {
+            Tile exitTile = neighbors.get(Direction.NORTH);
+            if (exitTile != null && exitTile.content instanceof Exit exit) {
                 viewRoom = exit.getOtherRoom();
             }
         } else if (input.equals("A")) {
-            Exit exit = (Exit) neighbors.get(Direction.WEST).content;
-            if (exit != null) {
+            Tile exitTile = neighbors.get(Direction.WEST);
+            if (exitTile != null && exitTile.content instanceof Exit exit) {
                 viewRoom = exit.getOtherRoom();
             }
         } else if (input.equals("S")) {
-            Exit exit = (Exit) neighbors.get(Direction.SOUTH).content;
-            if (exit != null) {
+            Tile exitTile = neighbors.get(Direction.SOUTH);
+            if (exitTile != null && exitTile.content instanceof Exit exit) {
                 viewRoom = exit.getOtherRoom();
             }
         } else if (input.equals("D")) {
-            Exit exit = (Exit) neighbors.get(Direction.EAST).content;
-            if (exit != null) {
+            Tile exitTile = neighbors.get(Direction.EAST);
+            if (exitTile != null && exitTile.content instanceof Exit exit) {
                 viewRoom = exit.getOtherRoom();
             }
         } else if (input.equals("QUIT")) {
-            gameState = GameState.VICTORY;
+            quit = true;
         } else {
             System.out.println("Invalid input!");
         }
@@ -50,7 +50,7 @@ public class SpectatorController extends Controller {
             String input = scanner.nextLine();
             processInput(input);
 
-            if (gameState == GameState.VICTORY) {
+            if (quit) {
                 return null;
             }
         }

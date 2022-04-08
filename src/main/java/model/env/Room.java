@@ -3,7 +3,6 @@ package model.env;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.HashSet;
-import java.util.Map.Entry;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -17,7 +16,7 @@ import model.events.PlayerTurnEndListener;
 public class Room implements PlayerTurnEndListener, Originator {
     //private static final String[] ROOM_TYPES = {"library", "closet", "hall", "bedroom", "cave", "ruin"};
     private EnumMap<Direction, Tile> neighbors = new EnumMap<>(Direction.class);
-    public HashSet<Entity> entities = new HashSet<>();
+    private HashSet<Entity> entities = new HashSet<>();
 
     private Tile[][] tiles;
     private int height;
@@ -95,8 +94,6 @@ public class Room implements PlayerTurnEndListener, Originator {
                 setContent(location, obj);
             else
                 setOccupant(location, obj);
-            entity.setLocation(location);
-            entities.add(entity);
         }
         else{
             setContent(location, obj);
@@ -173,14 +170,16 @@ public class Room implements PlayerTurnEndListener, Originator {
         return null;
     }
 
+    /**
+     * Returns true if there are no LIVING HOSTILE entities in room.
+     * @return whether or not there isn't a living hostile entity
+     */
     public boolean isCleared() {
-        for (Tile[] row : tiles)
-            for (Tile tile : row)
-                if (tile.occupant instanceof NPC)
-                    return false;
+        for(Entity entity : entities)
+            if(entity instanceof NPC npc && !npc.isDead())
+                return false;
         return true;
     }
-
 
     public Tile getTileAtLocation(Location loc) {
         if (!inBounds(loc))

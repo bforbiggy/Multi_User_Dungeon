@@ -58,12 +58,18 @@ public class Item implements Originator
     }
 
     public static Item convertMemento(Element element){
-        // TODO: TEST ELEMENT TYPE AND CALL APPROPRIATE CONVERTER
-
-        String name = element.getAttribute("name");
-        String description = element.getAttribute("description");
-        int value = Integer.parseInt(element.getAttribute("value"));
-        return new Item(name, description, value);
+        if (element.getAttribute("type").equalsIgnoreCase(Bag.class.getSimpleName()))
+            return Bag.convertMemento(element);
+        else if (element.getAttribute("type").equalsIgnoreCase(Consumable.class.getSimpleName()))
+            return Consumable.convertMemento(element);
+        else if (element.getAttribute("type").equalsIgnoreCase(Equippable.class.getSimpleName()))
+            return Equippable.convertMemento(element);
+        else{
+            String name = element.getAttribute("name");
+            String description = element.getAttribute("description");
+            int value = Integer.parseInt(element.getAttribute("value"));
+            return new Item(name, description, value);
+        }
     }
 
     @Override

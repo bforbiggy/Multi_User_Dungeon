@@ -5,7 +5,6 @@ import model.EndlessGame;
 import model.Game;
 import model.entities.Player;
 import model.env.Location;
-import model.env.Map;
 import model.items.EquipTag;
 import persistence.FileConstants;
 import persistence.accounts.Account;
@@ -13,6 +12,7 @@ import util.*;
 
 import static java.lang.Integer.parseInt;
 import java.io.File;
+import java.io.FilenameFilter;
 
 public class GameController extends Controller {
     private Scanner scanner = new Scanner(System.in);
@@ -32,7 +32,8 @@ public class GameController extends Controller {
 
         // Prints out game start message
         System.out.println(GameController.TITLE_SCREEN_STRING);
-        System.out.println("Welcome " + game.getPlayer().getName() + ", prepare to start a grand adventure!");
+        System.out.println("Welcome " + game.getPlayer().getName() +
+                ", prepare to start a grand adventure!");
     }
 
     public void processInput(String input) {
@@ -42,7 +43,7 @@ public class GameController extends Controller {
         // Default values for function
         view = game.getCurrRoom();
         Player player = game.getPlayer();
-        
+
 
         // Display controls
         if (tokens[0].equals("CONTROLS")) {
@@ -50,11 +51,8 @@ public class GameController extends Controller {
         }
         // Save the game
         else if (tokens[0].equals("SAVE")) {
-            Map map = game.getMap();
-            CSVSaver.savePlayer(player, FileConstants.SAVE_FOLDER_PATH + account.getUsername() +
-                    "player.csv");
-            CSVSaver.saveMap(map, FileConstants.SAVE_FOLDER_PATH + account.getUsername() +
-                    "map.csv");
+            File dest = new File(FileConstants.SAVE_FOLDER_PATH + account.getUsername() + "game." + GameFormat.CSV.name());
+            GameSaver.saveGame(game, dest);
             System.out.println("Game saved!");
         }
         // Use exit
@@ -73,7 +71,7 @@ public class GameController extends Controller {
                         breakLoop = game.useExit(x, y);
                     }
                 }
-               
+
             }
             view = game.getCurrRoom();
         }
@@ -144,8 +142,8 @@ public class GameController extends Controller {
         else if (tokens[0].equals("FINISH"))
             game.finishGame();
         // Use shrine
-        else if (tokens[0].equals("SHRINE") && game instanceof EndlessGame endlessGame){
-            if(endlessGame.useShrine())
+        else if (tokens[0].equals("SHRINE") && game instanceof EndlessGame endlessGame) {
+            if (endlessGame.useShrine())
                 System.out.println("Praying at the shrine, you know death will not be the end.");
         }
         else
@@ -160,14 +158,14 @@ public class GameController extends Controller {
 
             String input = scanner.nextLine();
 
-            // Game has ended, so we delete the saves (no need to update account stats, menuController autosaves)
+            // Game has ended
             if (game.getGameState() != Game.GameState.ONGOING) {
-                File playerSave = new File(FileConstants.SAVE_FOLDER_PATH + account.getUsername() +
-                        "player.csv");
-                playerSave.delete();
-                File mapSave = new File(FileConstants.SAVE_FOLDER_PATH + account.getUsername() +
-                        "map.csv");
-                mapSave.delete();
+                // Delete the saves (no need to update account stats, menuController autosaves)
+                FilenameFilter filter = (file, name) -> name.startsWith(account.getUsername()) && name.contains("game");
+                File saveFolder = new File(FileConstants.SAVE_FOLDER_PATH);
+                for(File saveFile : saveFolder.listFiles(filter)){
+                    saveFile.delete();
+                }
                 return null;
             }
 

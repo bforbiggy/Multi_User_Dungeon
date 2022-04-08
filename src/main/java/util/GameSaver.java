@@ -1,6 +1,8 @@
 package util;
 
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import javax.xml.parsers.*;
 import javax.xml.transform.*;
 import javax.xml.transform.dom.DOMSource;
@@ -29,6 +31,24 @@ public class GameSaver {
             return document;
         } catch (Exception e) {
             e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static File saveGame(Game game, File dest) {
+        String filePath = dest.getAbsolutePath();
+        if (filePath.toUpperCase().endsWith(GameFormat.CSV.name())) {
+            try (FileWriter fileWriter = new FileWriter(dest)){
+                fileWriter.write(CSVSaver.gameToString(game));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        else if (filePath.toUpperCase().endsWith(GameFormat.XML.name())) {
+            
+        }
+        else if (filePath.toUpperCase().endsWith(GameFormat.JSON.name())) {
+
         }
         return null;
     }
