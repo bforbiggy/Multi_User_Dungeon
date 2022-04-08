@@ -29,7 +29,7 @@ public class Obstacle implements GameObject
         return obstacle;
     }
 
-    public static Obstacle loadMemento(Element element){
+    public static Obstacle convertMemento(Element element){
         String name = element.getAttribute("name");
         String representation = element.getAttribute("representation");
         return new Obstacle(name, representation);

@@ -35,7 +35,7 @@ public class Shrine implements GameObject {
         return doc.createElement("shrine");
     }
 
-    public Shrine loadMemento(Element memento) {
+    public static Shrine convertMemento(Element memento) {
         return new Shrine();
     }
 

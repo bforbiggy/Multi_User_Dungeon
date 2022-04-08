@@ -1,15 +1,16 @@
 package model.items;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-public class Bag extends Item
+public class Bag extends Item implements Iterable<Item>
 {
     public static final Bag INFINITE_BAG = new Bag("Infinite Bag", "ooooh ohhhhh bag is infinite oooh so infinite wow", 50, Integer.MAX_VALUE);
 
     private int capacity;
-    public ArrayList<Item> items = new ArrayList<Item>();
+    private ArrayList<Item> items = new ArrayList<Item>();
 
     public Bag(String name, String description, int value, int capacity)
     {
@@ -96,10 +97,6 @@ public class Bag extends Item
         return true;
     }
 
-    public Bag copy(){
-        return new Bag(name, description, value, capacity);
-    }
-
     /**
      * Returns the value of this bag, excluding its own value.
      * @return the value
@@ -112,8 +109,17 @@ public class Bag extends Item
         return sum;
     }
 
-    public int getCapacity() {
+    public int size(){
+        return items.size();
+    }
+
+    public int capacity() {
         return capacity;
+    }
+
+    @Override
+    public Iterator<Item> iterator() {
+        return items.iterator();
     }
 
     public static Bag generateBag()
@@ -139,8 +145,16 @@ public class Bag extends Item
         return itemElem;
     }
 
+    public static Bag convertMemento(Element element){
+        String name = element.getAttribute("name");
+        String description = element.getAttribute("description");
+        int value = Integer.parseInt(element.getAttribute("value"));
+        int capacity = Integer.parseInt(element.getAttribute("capacity"));
+        return new Bag(name, description, value, capacity);
+    }
+
     @Override
-    public Bag loadMemento(Element element){
-        return this;
+    public Bag clone() {
+        return new Bag(name, description, value, capacity);
     }
 }

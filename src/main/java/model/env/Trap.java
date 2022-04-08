@@ -83,7 +83,7 @@ public class Trap implements GameObject
         return trapElem;
     }
 
-    public static Trap loadMemento(Element element){
+    public static Trap convertMemento(Element element){
         int attack = Integer.parseInt(element.getAttribute("attack"));
         boolean detected = Boolean.parseBoolean(element.getAttribute("detected"));
         boolean disabled = Boolean.parseBoolean(element.getAttribute("disabled"));

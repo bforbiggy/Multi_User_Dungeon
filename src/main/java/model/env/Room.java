@@ -3,15 +3,16 @@ package model.env;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.HashSet;
+import java.util.Map.Entry;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import model.GameObject;
+import model.Originator;
 import model.entities.*;
 import model.events.PlayerTurnEnd;
 import model.events.PlayerTurnEndListener;
-import util.Originator;
 
 public class Room implements PlayerTurnEndListener, Originator {
     //private static final String[] ROOM_TYPES = {"library", "closet", "hall", "bedroom", "cave", "ruin"};
@@ -50,6 +51,16 @@ public class Room implements PlayerTurnEndListener, Originator {
     public void setContent(Location location, GameObject content) {
         Tile tile = getTileAtLocation(location);
         tile.content = content;
+
+        if (content instanceof Entity entity) {
+            entity.setLocation(location);
+            entities.add(entity);
+        }
+
+        if(content instanceof Exit exit){
+            exit.setCurRoom(this);
+            neighbors.put(Direction.locToDirection(location, width, height), tile);
+        }
     }
 
     /**
@@ -233,34 +244,33 @@ public class Room implements PlayerTurnEndListener, Originator {
 
         // Read through room for its contents
         int chestCount = 0;
-        int exitCount = 0; // Use hashmap<Tile,String> to store cardinality, can't simply build string as we need to know total number of exits for proper plurality
         ArrayList<String> dead = new ArrayList<String>();
         ArrayList<String> alive = new ArrayList<String>();
         for (Tile[] row : tiles) {
             for (Tile tile : row) {
                 if (tile.content instanceof Chest)
                     chestCount++;
-                else if (tile.content instanceof Exit)
-                    exitCount++;
-                else if (tile.content instanceof NPC)
-                    dead.add(((NPC) tile.content).toString());
-                else if (tile.occupant instanceof NPC)
-                    alive.add(((NPC) tile.occupant).toString());
+                else if (tile.content instanceof NPC npc)
+                    dead.add(npc.getName());
+                else if (tile.occupant instanceof NPC npc)
+                    alive.add(npc.getName());
             }
         }
 
         String npcString;
         if (alive.isEmpty()) {
             if (dead.isEmpty())
-                npcString = "The room is empty. ";
+                npcString = "The room has no monsters.";
             else
                 npcString = "There is no monster left alive in this room. ";
         }
-        else
-            npcString = "With " + dead.size() + " monsters dead, you see the following: a " + String
-                    .join(", a", alive) + ". ";
+        else{
+            npcString = "With " + dead.size() + " monsters dead, you see the following: ";
+            npcString += String.join(", ", "a " + alive);
+        }
+        
 
-        String output = String.format("A %s %s room has %s exit(s). ", size, length, exitCount);
+        String output = String.format("A %s %s room has %s exit(s). ", size, length, neighbors.keySet().size());
         if (chestCount != 0)
             output += "There are " + chestCount + " chest(s). ";
         output += npcString;
@@ -277,6 +287,7 @@ public class Room implements PlayerTurnEndListener, Originator {
         roomElem.setAttribute("width", Integer.toString(width));
         roomElem.setAttribute("desc", desc);
 
+        // Convert all tiles to elements
         for (Tile[] row : tiles) {
             for (Tile tile : row) {
                 roomElem.appendChild(tile.createMemento(doc));
@@ -286,7 +297,7 @@ public class Room implements PlayerTurnEndListener, Originator {
         return roomElem;
     }
 
-    public static Room loadMemento(Element element){
+    public static Room convertMemento(Element element){
         // Creates template room
         int type = Integer.parseInt(element.getAttribute("type"));
         int width = Integer.parseInt(element.getAttribute("width"));
@@ -298,17 +309,22 @@ public class Room implements PlayerTurnEndListener, Originator {
         for (int i = 0; i < roomNodes.getLength(); i++) {
             Node tileNode = roomNodes.item(i);
             if (tileNode instanceof Element tileElem) {
-                // Load tile node as tile
-                Tile tile = Tile.loadMemento(tileElem);
-                Location loc = tile.getLocation();
+                Location loc = new Location(Integer.parseInt(tileElem.getAttribute("x")), Integer.parseInt(tileElem.getAttribute("y")));
+                Tile tile = room.getTileAtLocation(loc);
 
-                // If tile contains entity, update its location
-                if(tile.occupant instanceof Entity entity)
-                    entity.setLocation(loc);
-                if(tile.content instanceof Entity entity)
-                    entity.setLocation(loc);
+                // Load data into tile
+                tile.loadMemento(tileElem);
+
+                // Set tile data using room methods
+                if(tile.occupant != null){
+                    room.setOccupant(loc, tile.occupant);
+                }
+                if(tile.content != null){
+                    room.setContent(loc, tile.content);
+                }
             }
         }
+
         return room;
     }
 

@@ -45,7 +45,7 @@ public class Exit implements GameObject
         return exit;
     }
 
-    public static Exit loadMemento(Element element){
+    public static Exit convertMemento(Element element){
         int id = Integer.parseInt(element.getAttribute("id"));
         return new Exit(id);
     }

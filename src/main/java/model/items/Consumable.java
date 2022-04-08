@@ -84,8 +84,15 @@ public class Consumable extends Item implements PlayerTurnEndListener
         return itemElem;
     }
 
-    @Override
-    public Consumable loadMemento(Element element) {
-        return this;
+    public static Consumable convertMemento(Element element) {
+        String name = element.getAttribute("name");
+        String description = element.getAttribute("description");
+        int value = Integer.parseInt(element.getAttribute("value"));
+        Stats stats = Stats.convertMemento((Element)element.getElementsByTagName("stats").item(0));
+
+        String durationStr = element.getAttribute("duration");
+        int duration = durationStr.isEmpty() ? 0 : Integer.parseInt(durationStr);
+        
+        return new Consumable(name, description, value, stats, duration);
     }
 }

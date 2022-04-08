@@ -59,8 +59,12 @@ public class Equippable extends Item
         return itemElem;
     }
 
-    @Override
-    public Equippable loadMemento(Element element){
-        return null;
+    public static Equippable convertMemento(Element element){
+        String name = element.getAttribute("name");
+        String description = element.getAttribute("description");
+        int value = Integer.parseInt(element.getAttribute("value"));
+        Stats stats = Stats.convertMemento((Element)element.getElementsByTagName("stats").item(0));
+        EquipTag tag = EquipTag.valueOf(element.getAttribute("tag"));
+        return new Equippable(name, description, value, stats, tag);
     }
 }

@@ -22,26 +22,27 @@ public class GameController extends Controller {
 
     private Object view;
     private Game game;
-    private Player player = null;
-    private Map map = null;
 
     private Account account;
 
     public GameController(Account account, Game game) {
         this.account = account;
         this.game = game;
-        this.player = game.getPlayer();
-        this.map = game.getMap();
         view = game.getCurrRoom();
 
         // Prints out game start message
         System.out.println(GameController.TITLE_SCREEN_STRING);
-        System.out.println("Welcome " + player.getName() + ", prepare to start a grand adventure!");
+        System.out.println("Welcome " + game.getPlayer().getName() + ", prepare to start a grand adventure!");
     }
 
     public void processInput(String input) {
         input = input.toUpperCase();
         String[] tokens = input.split(" ");
+
+        // Default values for function
+        view = game.getCurrRoom();
+        Player player = game.getPlayer();
+        
 
         // Display controls
         if (tokens[0].equals("CONTROLS")) {
@@ -49,6 +50,7 @@ public class GameController extends Controller {
         }
         // Save the game
         else if (tokens[0].equals("SAVE")) {
+            Map map = game.getMap();
             CSVSaver.savePlayer(player, FileConstants.SAVE_FOLDER_PATH + account.getUsername() +
                     "player.csv");
             CSVSaver.saveMap(map, FileConstants.SAVE_FOLDER_PATH + account.getUsername() +
@@ -57,13 +59,21 @@ public class GameController extends Controller {
         }
         // Use exit
         else if (tokens[0].equals("EXIT")) {
-            Location playerLoc = player.getLocation();
-            // Look for nearby exits to use, using it if found
-            boolean breakLoop = false;
-            for (int x = playerLoc.getX() - 1; x <= playerLoc.getX() + 1 && !breakLoop; x++) {
-                for (int y = playerLoc.getY() - 1; y <= playerLoc.getY() + 1 && !breakLoop; y++) {
-                    breakLoop = game.useExit(x, y);
+            // Use specific exit
+            if (tokens.length >= 3) {
+                game.useExit(Integer.parseInt(tokens[1]), Integer.parseInt(tokens[2]));
+            }
+            // Otherwise, use closest exit
+            else {
+                Location playerLoc = player.getLocation();
+                boolean breakLoop = false;
+                for (int x = playerLoc.getX() - 1; x <= playerLoc.getX() + 1 && !breakLoop; x++) {
+                    for (int y = playerLoc.getY() - 1; y <= playerLoc.getY() + 1 &&
+                            !breakLoop; y++) {
+                        breakLoop = game.useExit(x, y);
+                    }
                 }
+               
             }
             view = game.getCurrRoom();
         }
@@ -134,8 +144,10 @@ public class GameController extends Controller {
         else if (tokens[0].equals("FINISH"))
             game.finishGame();
         // Use shrine
-        else if(tokens[0].equals("SHRINE") && game instanceof EndlessGame endlessGame)
-            endlessGame.useShrine();
+        else if (tokens[0].equals("SHRINE") && game instanceof EndlessGame endlessGame){
+            if(endlessGame.useShrine())
+                System.out.println("Praying at the shrine, you know death will not be the end.");
+        }
         else
             System.out.println("You entered an incorrect input! Please try again.");
     }
@@ -150,9 +162,11 @@ public class GameController extends Controller {
 
             // Game has ended, so we delete the saves (no need to update account stats, menuController autosaves)
             if (game.getGameState() != Game.GameState.ONGOING) {
-                File playerSave = new File(FileConstants.SAVE_FOLDER_PATH + account.getUsername() + "player.csv");
+                File playerSave = new File(FileConstants.SAVE_FOLDER_PATH + account.getUsername() +
+                        "player.csv");
                 playerSave.delete();
-                File mapSave = new File(FileConstants.SAVE_FOLDER_PATH + account.getUsername() + "map.csv");
+                File mapSave = new File(FileConstants.SAVE_FOLDER_PATH + account.getUsername() +
+                        "map.csv");
                 mapSave.delete();
                 return null;
             }

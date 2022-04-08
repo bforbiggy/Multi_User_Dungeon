@@ -5,8 +5,8 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import model.Originator;
 import model.entities.*;
-import util.Originator;
 
 public class Map implements Originator {
     public Room currRoom;
@@ -59,30 +59,35 @@ public class Map implements Originator {
         return map;
     }
 
-    public static Map loadMemento(Element memento) {
+    public static Map convertMemento(Element memento) {
         Map map = new Map();
         ArrayList<Room> rooms = map.rooms;
-
-        NodeList mapNodes = memento.getChildNodes();
+        ArrayList<Exit> exits = new ArrayList<>();
 
         // Iterates throgh all map node's children nodes
+        NodeList mapNodes = memento.getChildNodes();
         for (int i = 0; i < mapNodes.getLength(); i++) {
             Node node = mapNodes.item(i);
             if (node instanceof Element element) {
                 // Load room node as room
-                Room room = Room.loadMemento(element);
+                Room room = Room.convertMemento(element);
                 rooms.add(room);
 
                 // If player is in this room, update currRoom to match
                 if (map.currRoom == null) {
-                    for (Tile[] row : room.getTiles())
-                        for (Tile tile : row)
-                            if (tile.occupant instanceof Player)
-                                map.currRoom = room;
+                    for (Entity entity : room.getEntities())
+                        if (entity instanceof Player)
+                            map.currRoom = room;
                 }
+
+                // Add room's exits to exits list
+                for (Tile tile : room.getNeighbors().values())
+                    if (tile.content instanceof Exit exit)
+                        exits.add(exit);
             }
         }
 
+        connectRooms(exits);
         return map;
     }
 }

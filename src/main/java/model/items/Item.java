@@ -3,7 +3,7 @@ package model.items;
 import java.util.Random;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import util.Originator;
+import model.Originator;
 
 public class Item implements Originator
 {
@@ -57,8 +57,13 @@ public class Item implements Originator
         return itemElem;
     }
 
-    public Item loadMemento(Element element){
-        return null;
+    public static Item convertMemento(Element element){
+        // TODO: TEST ELEMENT TYPE AND CALL APPROPRIATE CONVERTER
+
+        String name = element.getAttribute("name");
+        String description = element.getAttribute("description");
+        int value = Integer.parseInt(element.getAttribute("value"));
+        return new Item(name, description, value);
     }
 
     @Override

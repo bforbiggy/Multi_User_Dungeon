@@ -283,7 +283,7 @@ public class CSVLoader {
                                 exit.setCurRoom(room);
                                 exits.add(exit);
 
-                                Direction direction = Direction.locationToWallDirection(new Location(w,h), width, height);
+                                Direction direction = Direction.locToDirection(new Location(w,h), width, height);
                                 room.getNeighbors().put(direction, tile);
                             }
                         }

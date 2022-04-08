@@ -3,17 +3,7 @@ package model.events;
 import java.util.ArrayList;
 
 public class DayCycle {
-    private Runnable runnable = () -> {
-        while(true) {
-            try {
-                Thread.sleep(CYCLE_TIMER * 1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-                Thread.currentThread().interrupt();
-            }
-            toggleDayNight();
-        }
-    };
+    private Thread dcThread;
     private static final int CYCLE_TIMER = 5 * 60; // Currently 5 minutes
 
     private boolean toggle = true;
@@ -21,8 +11,18 @@ public class DayCycle {
 
     public DayCycle()
     {
-        Thread thread = new Thread(runnable);
-        thread.start();
+        Runnable runnable = () -> {
+            try {
+                while (!Thread.currentThread().isInterrupted()) {
+                    Thread.sleep(CYCLE_TIMER * 1000);
+                    toggleDayNight();
+                }
+            } catch (InterruptedException e) {
+
+            }
+        };
+        dcThread = new Thread(runnable);
+        dcThread.start();
     }
     
     public void addListener(DayCycleListener listener){
@@ -57,5 +57,9 @@ public class DayCycle {
     public boolean isNight()
     {
         return !toggle;
+    }
+
+    public void stop(){
+        dcThread.interrupt();
     }
 }

@@ -13,7 +13,7 @@ public enum Direction {
         }
     }
 
-    public static Direction locationToWallDirection(Location location, int width, int height)
+    public static Direction locToDirection(Location location, int width, int height)
     {
         if(location.getY() == 0){
             return NORTH;

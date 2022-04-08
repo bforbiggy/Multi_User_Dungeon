@@ -9,14 +9,11 @@ import model.env.*;
 import model.events.*;
 import model.items.*;
 import model.tracking.*;
-import util.Originator;
 
 // This class acts as model-view AND controller AND view
 public class Game implements PlayerTurnEndListener, Originator {
     public enum GameState {
-        ONGOING,
-        VICTORY,
-        LOSS
+        ONGOING, VICTORY, LOSS
     }
 
     protected GameState gameState = GameState.ONGOING;
@@ -28,14 +25,13 @@ public class Game implements PlayerTurnEndListener, Originator {
     protected DayCycle dayCycle;
     protected PlayerTurnEnd playerTurnEnd;
 
-    protected Game() {
-    }
+    protected Game() {}
 
     /**
      * Initialization process for the game.
      * 
      * @param player Player
-     * @param map    Map
+     * @param map Map
      */
     public Game(Player player, Map map) {
         this.player = player;
@@ -56,13 +52,14 @@ public class Game implements PlayerTurnEndListener, Originator {
             StatTracker.getTracker().addValue(TrackedStat.LIVES_LOST, 1);
 
             // Convert player into a corpse
-            NPC corpse = new NPC(player.getName(), player.getDescription(), new Stats(0, 0, 0), true, new Inventory(1));
-            corpse.getInventory().addItem(Bag.INFINITE_BAG.copy());
+            NPC corpse = new NPC(player.getName(), player.getDescription(), new Stats(0, 0, 0),
+                    true, new Inventory(1));
+            corpse.getInventory().addItem(Bag.INFINITE_BAG.clone());
 
             // Transfer all items to corpse
             ArrayList<Item> itemsLeft = new ArrayList<Item>();
             for (Bag bag : player.getInventory().bags)
-                for (Item item : bag.items)
+                for (Item item : bag)
                     itemsLeft.add(item);
             for (Item item : itemsLeft)
                 Inventory.TransferItem(player.getInventory(), corpse.getInventory(), item);
@@ -76,9 +73,7 @@ public class Game implements PlayerTurnEndListener, Originator {
     }
 
     /**
-     * Performs the necessary room changing operations.
-     * This updates npc subscriptions to the day/night cycle/.
-     * The room monitoring player movements is also changed.
+     * Performs the necessary room changing operations. This updates npc subscriptions to the day/night cycle/. The room monitoring player movements is also changed.
      * 
      * @param newRoom
      */
@@ -88,13 +83,13 @@ public class Game implements PlayerTurnEndListener, Originator {
         // Remove old room & its npcs from appropriate events
         playerTurnEnd.removeListener(map.currRoom);
         for (Entity entity : map.currRoom.getEntities())
-            if(entity instanceof NPC npc)
+            if (entity instanceof NPC npc)
                 playerTurnEnd.removeListener(npc);
 
         // Add new room and its npcs to appropriate events
         playerTurnEnd.addListener(newRoom);
         for (Entity entity : newRoom.getEntities()) {
-            if (entity instanceof NPC npc){
+            if (entity instanceof NPC npc) {
                 dayCycle.addListener(npc);
                 playerTurnEnd.addListener(npc);
             }
@@ -120,8 +115,7 @@ public class Game implements PlayerTurnEndListener, Originator {
     }
 
     /**
-     * Given a x,y location, attempts to move player to destination.
-     * Fails if location is out of bounds or invalid player movement.
+     * Given a x,y location, attempts to move player to destination. Fails if location is out of bounds or invalid player movement.
      * 
      * @param x x
      * @param y y
@@ -143,8 +137,7 @@ public class Game implements PlayerTurnEndListener, Originator {
     }
 
     /**
-     * Given a x,y location, attempts to attack destination.
-     * Fails if location has no living npc.
+     * Given a x,y location, attempts to attack destination. Fails if location has no living npc.
      * 
      * @param x x
      * @param y y
@@ -174,10 +167,10 @@ public class Game implements PlayerTurnEndListener, Originator {
     }
 
     /**
-     * Attempts to return the inventory of whatever is on current location.
-     * Fails if there is nothing at player location with a viewable inventory.
+     * Attempts to return the inventory of whatever is on current location. Fails if there is nothing at player location with a viewable inventory.
      */
     private HashSet<Inventory> lootedInventories = new HashSet<Inventory>();
+
     public Inventory viewLoot() {
         Room currRoom = map.currRoom;
         Tile tile = currRoom.getTileAtLocation(player.getLocation());
@@ -186,11 +179,12 @@ public class Game implements PlayerTurnEndListener, Originator {
         Inventory inv = null;
         if (tile.content instanceof Chest chest) {
             inv = chest.getInventory();
-        } else if (tile.content instanceof Entity entity) {
+        }
+        else if (tile.content instanceof Entity entity) {
             inv = entity.getInventory();
         }
 
-        if(inv != null){
+        if (inv != null) {
             StatTracker tracker = StatTracker.getTracker();
 
             // Auto loot gold
@@ -199,9 +193,9 @@ public class Game implements PlayerTurnEndListener, Originator {
             inv.gold = 0;
 
             // Track number of new items discovered
-            if(lootedInventories.add(inv)){
-                for(Bag bag : inventory.bags)
-                    tracker.addValue(TrackedStat.ITEMS_FOUND, bag.items.size());
+            if (lootedInventories.add(inv)) {
+                for (Bag bag : inventory.bags)
+                    tracker.addValue(TrackedStat.ITEMS_FOUND, bag.size());
             }
         }
 
@@ -209,11 +203,10 @@ public class Game implements PlayerTurnEndListener, Originator {
     }
 
     /**
-     * Attempts to loot the current inventory the player is on.
-     * Fails if there is nothing at player location with a viewable inventory.
-     * Also fails if the bag/item index is invalid.
+     * Attempts to loot the current inventory the player is on. Fails if there is nothing at player location with a viewable inventory. Also fails if the bag/item index is
+     * invalid.
      * 
-     * @param bagIndex  the bag containing target item
+     * @param bagIndex the bag containing target item
      * @param itemIndex the item index of target item in bag
      */
     public void doLoot(int bagIndex, int itemIndex) {
@@ -232,7 +225,7 @@ public class Game implements PlayerTurnEndListener, Originator {
      * @return the array of items in shop
      */
     public Inventory viewShop() {
-        //TODO: ROOM IS CLEAR CHECK
+        // TODO: ROOM IS CLEAR CHECK
         Tile tile = map.currRoom.getTileAtLocation(player.getLocation());
         if (tile.content instanceof Merchant merchant) {
             return merchant.getInventory();
@@ -241,8 +234,7 @@ public class Game implements PlayerTurnEndListener, Originator {
     }
 
     /**
-     * Attempts to buy an item from a shop.
-     * Will not work if there are enemies remaining
+     * Attempts to buy an item from a shop. Will not work if there are enemies remaining
      * 
      * @param itemIndex the item to attempt to buy
      * @return the item that was bought
@@ -257,10 +249,9 @@ public class Game implements PlayerTurnEndListener, Originator {
     }
 
     /**
-     * Attempts to buy an item from a shop.
-     * Will not work if there are enemies remaining
+     * Attempts to buy an item from a shop. Will not work if there are enemies remaining
      * 
-     * @param bagIndex  the bag containing target item
+     * @param bagIndex the bag containing target item
      * @param itemIndex the item index of target item in bag
      * @return the item that was sold
      */
@@ -313,20 +304,31 @@ public class Game implements PlayerTurnEndListener, Originator {
     }
 
     @Override
-    public Element createMemento(Document doc){
-        Element game = doc.createElement("game");
-        game.appendChild(map.createMemento(doc));
-        return game;
+    public Element createMemento(Document doc) {
+        Element gameElem = doc.createElement("game");
+        gameElem.appendChild(map.createMemento(doc));
+        return gameElem;
     }
 
-    public static Game loadMemento(Element element){
-        Map map = Map.loadMemento((Element)element.getFirstChild());
-        for(Tile[] row : map.currRoom.getTiles())
-            for(Tile tile : row)
-                if(tile.content instanceof Player player)
-                    return new Game(player, map);
-        return null;
+
+    public void loadMemento(Element element) {
+        map = Map.convertMemento((Element) element.getFirstChild());
+        for (Tile[] row : map.currRoom.getTiles()) {
+            for (Tile tile : row) {
+                if (tile.occupant instanceof Player newPlayer) {
+                    this.player = newPlayer;
+                    this.inventory = newPlayer.getInventory();
+                }
+            }
+        }
+
+        dayCycle.stop();
+        dayCycle = new DayCycle();
+        playerTurnEnd = new PlayerTurnEnd(this);
+        playerTurnEnd.addListener(this);
+        roomChange(map.currRoom);
     }
+
 
     public Map getMap() {
         return map;

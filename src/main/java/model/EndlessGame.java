@@ -30,6 +30,7 @@ public class EndlessGame extends Game {
 
         dayCycle = new DayCycle();
         playerTurnEnd = new PlayerTurnEnd(this);
+        playerTurnEnd.addListener(this);
 
         // Create endless map starting room
         map = new Map();
@@ -42,23 +43,6 @@ public class EndlessGame extends Game {
         Location center = new Location(room.getWidth() / 2, room.getHeight() / 2);
         room.setOccupant(center, player);
         player.setLocation(center);
-
-        roomChange(map.currRoom);
-    }
-
-    /**
-     * Initialization process for the game.
-     * 
-     * @param player Player
-     * @param map Map
-     */
-    private EndlessGame(Player player, Map map) {
-        this.player = player;
-        this.inventory = this.player.getInventory();
-        this.map = map;
-
-        dayCycle = new DayCycle();
-        playerTurnEnd = new PlayerTurnEnd(this);
 
         roomChange(map.currRoom);
     }
@@ -95,7 +79,7 @@ public class EndlessGame extends Game {
 
         // Generate room contents and shrine for roughly 1-in-10 rooms
         //TODO: RESET VALUE TO 10
-        if(randy.nextInt(2) == 0){
+        if(randy.nextInt(1) == 0){
             int x = randy.nextInt(room.getWidth()-2)+1;
             int y = randy.nextInt(room.getHeight()-2)+1;
             Shrine shrine = new Shrine();
@@ -105,22 +89,15 @@ public class EndlessGame extends Game {
         return room;
     }
 
-    public void useShrine(){
+    public boolean useShrine(){
         // If a shrine can be found, use it to save game state
         Tile tile = map.currRoom.getTileAtLocation(player.getLocation());
         if(tile.content instanceof Shrine shrine){
             shrine.use(this);
             lastShrine = shrine;
+            return true;
         }
-    }
-
-    public static EndlessGame loadMemento(Element element) {
-        Map map = Map.loadMemento((Element) element.getFirstChild());
-        for (Tile[] row : map.currRoom.getTiles())
-            for (Tile tile : row)
-                if (tile.content instanceof Player player)
-                    return new EndlessGame(player, map);
-        return null;
+        return false;
     }
     
     @Override
@@ -129,8 +106,8 @@ public class EndlessGame extends Game {
             // If shrine was used, return game to saved state
             if(lastShrine != null)
             {
-                // TODO: DO NOT LOAD NEW GAME, INSTEAD LOAD MAP + PLAYER
-                Element gameDoc = lastShrine.getGameMemento();
+                Element gameElem = lastShrine.getGameMemento();
+                loadMemento(gameElem);
             }
             // Otherwise, resume normal game logic
             else

@@ -18,7 +18,7 @@ public class Chest implements GameObject
     public Chest()
     {
         inventory = new Inventory(1);
-        inventory.addItem(Bag.INFINITE_BAG.copy());
+        inventory.addItem(Bag.INFINITE_BAG.clone());
     }
 
     public Chest(Inventory inventory) {
@@ -28,7 +28,7 @@ public class Chest implements GameObject
     public static Inventory generateLoot()
     {
         Inventory inv = new Inventory(1);
-        inv.addItem(Bag.INFINITE_BAG.copy());
+        inv.addItem(Bag.INFINITE_BAG.clone());
 
         // Randomly generate 1-5 items
         for(int i = 0; i < randy.nextInt(5-1)+1; i++)
@@ -59,9 +59,9 @@ public class Chest implements GameObject
         return chest;
     }
 
-    public static Chest loadMemento(Element element){
+    public static Chest convertMemento(Element element){
         Element inventoryElem = (Element)element.getElementsByTagName("inventory").item(0);
-        Inventory inventory = Inventory.loadMemento(inventoryElem);
+        Inventory inventory = Inventory.convertMemento(inventoryElem);
         return new Chest(inventory);
     }
 

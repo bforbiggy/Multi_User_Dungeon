@@ -5,10 +5,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import model.env.Location;
 import model.env.Room;
-import model.events.DayCycle;
-import model.events.DayCycleListener;
-import model.events.PlayerTurnEnd;
-import model.events.PlayerTurnEndListener;
+import model.events.*;
 import model.items.*;
 
 public class NPC extends Entity implements DayCycleListener, PlayerTurnEndListener
@@ -28,7 +25,7 @@ public class NPC extends Entity implements DayCycleListener, PlayerTurnEndListen
 
         diurnal = randy.nextBoolean();
         inventory = new Inventory(1);
-        inventory.addItem(Bag.INFINITE_BAG.copy());
+        inventory.addItem(Bag.INFINITE_BAG.clone());
     }
 
     public NPC(String name, String description, Stats stats, boolean diurnal, Inventory inventory)
@@ -95,7 +92,7 @@ public class NPC extends Entity implements DayCycleListener, PlayerTurnEndListen
 
     public static Inventory generateLoot() {
         Inventory inv = new Inventory(1);
-        inv.addItem(Bag.INFINITE_BAG.copy());
+        inv.addItem(Bag.INFINITE_BAG.clone());
 
         // Randomly generate 0-2 items
         for (int i = 0; i < randy.nextInt(3); i++) {
@@ -136,17 +133,17 @@ public class NPC extends Entity implements DayCycleListener, PlayerTurnEndListen
     @Override
     public Element createMemento(Document doc) {
         Element entityElem = super.createMemento(doc);
-        entityElem.setAttribute("type", "player");
+        entityElem.setAttribute("type", "npc");
         entityElem.setAttribute("diurnal", String.valueOf(diurnal));
 
         return entityElem;
     }
 
-    public static NPC loadMement(Element element){
+    public static NPC convertMemento(Element element){
         String name = element.getAttribute("name");
         String description = element.getAttribute("description");
-        Stats stats = Stats.loadMemento((Element) element.getElementsByTagName("name").item(0));
-        Inventory inventory = Inventory.loadMemento((Element) element.getElementsByTagName(
+        Stats stats = Stats.convertMemento((Element) element.getElementsByTagName("stats").item(0));
+        Inventory inventory = Inventory.convertMemento((Element) element.getElementsByTagName(
                 "inventory").item(0));
         boolean diurnal = Boolean.parseBoolean(element.getAttribute("diurnal"));
         return new NPC(name, description, stats, diurnal, inventory);
@@ -156,7 +153,5 @@ public class NPC extends Entity implements DayCycleListener, PlayerTurnEndListen
     public String toString(){
         return isDead() ? "n" : "N";
     }
-
-    
     
 }

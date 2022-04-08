@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.EnumMap;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import model.Originator;
 import model.entities.Entity;
 import model.events.PlayerTurnEnd;
-import util.Originator;
 
 public class Inventory implements Originator
 {
@@ -27,11 +27,12 @@ public class Inventory implements Originator
      * @param item To find in the inventory
      * @return Bag containing item
      */
-    private Bag itemSearch(Item item)
+    private Bag itemSearch(Item goal)
     {
         for(Bag bag : bags)
-            if(bag.items.contains(item))
-                return bag;
+           for(Item item : bag)
+                if(item.equals(goal))
+                    return bag;
         return null;
     }
 
@@ -189,7 +190,7 @@ public class Inventory implements Originator
      */
     public static Inventory getInfiniteInventory(){
         Inventory inventory = new Inventory(1);
-        inventory.addItem(Bag.INFINITE_BAG.copy());
+        inventory.addItem(Bag.INFINITE_BAG.clone());
         return inventory;
     }
     
@@ -202,7 +203,7 @@ public class Inventory implements Originator
         for(Bag bag : bags){
             Element bagElem = bag.createMemento(doc);
             // List all items in bag
-            for(Item item : bag.items)
+            for(Item item : bag)
                 bagElem.appendChild(item.createMemento(doc));
             element.appendChild(bagElem);
         }
@@ -215,7 +216,8 @@ public class Inventory implements Originator
         return element;
     }
 
-    public static Inventory loadMemento(Element element){
+    public static Inventory convertMemento(Element element){
+        //TODO: Implement memento conversion into inventory
         return null;
     }
 
@@ -232,18 +234,16 @@ public class Inventory implements Originator
             Bag bag = bags.get(i);
 
             // Accumulate bag data
-            usedSpace += bag.items.size();
-            availableSpace += bag.getCapacity();
+            usedSpace += bag.size();
+            availableSpace += bag.capacity();
             value += bag.getValues();
 
             // Print out the bag information
-            output.append(String.format("Bag #%d: %d/%d used, %d value", (i+1), bag.items.size(), bag.getCapacity(), bag.getValues()));
+            output.append(String.format("Bag #%d: %d/%d used, %d value", (i+1), bag.size(), bag.capacity(), bag.getValues()));
             output.append("\n===========================\n");
 
             // Print out items in the bag
-            for(int j = 0; j < bag.items.size(); j++)
-            {
-                Item item = bag.items.get(j);
+            for(Item item : bag){
                 output.append(item.toString() + "\n");
             }
         }

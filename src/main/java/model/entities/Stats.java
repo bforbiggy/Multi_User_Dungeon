@@ -2,7 +2,7 @@ package model.entities;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import util.Originator;
+import model.Originator;
 
 public class Stats implements Originator
 {
@@ -66,7 +66,7 @@ public class Stats implements Originator
         return statsElem;
     }
 
-    public static Stats loadMemento(Element element){
+    public static Stats convertMemento(Element element){
         int health = Integer.parseInt(element.getAttribute("health"));
         int attack = Integer.parseInt(element.getAttribute("attack"));
         int defense = Integer.parseInt(element.getAttribute("defense"));

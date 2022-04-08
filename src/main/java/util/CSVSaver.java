@@ -42,7 +42,7 @@ public class CSVSaver {
         tokens.add(Integer.toString(item.getValue()));
         if (item instanceof Bag bag) {
             tokens.add(0, "B");
-            tokens.add(Integer.toString(bag.getCapacity()));
+            tokens.add(Integer.toString(bag.capacity()));
         }
         else if (item instanceof Equippable equippable) {
             tokens.add(0, "E");
@@ -70,7 +70,7 @@ public class CSVSaver {
         // Add all inventory items
         ArrayList<String> stringItems = new ArrayList<String>();
         for (Bag bag : inventory.bags)
-            for (Item item : bag.items)
+            for (Item item : bag)
                 stringItems.add(itemToString(item));
         output += String.join(FileConstants.COMMA, stringItems);
         return output;
@@ -111,7 +111,7 @@ public class CSVSaver {
         tokens.addAll(statsToString(merchant.getStats()));
 
         ArrayList<String> stringItems = new ArrayList<String>();
-        for (Item item : merchant.getInventory().bags.get(0).items)
+        for (Item item : merchant.getInventory().bags.get(0))
             stringItems.add(itemToString(item));
         String invString = String.join(FileConstants.COMMA, stringItems);
 
@@ -149,7 +149,7 @@ public class CSVSaver {
             ArrayList<String> items = new ArrayList<String>();
             for (Bag bag : inventory.bags) {
                 bags.add(itemToString(bag));
-                for (Item item : bag.items)
+                for (Item item : bag)
                     items.add(itemToString(item));
             }
 
