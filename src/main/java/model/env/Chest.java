@@ -36,7 +36,7 @@ public class Chest implements GameObject
             // Decides what item to create
             double roll = randy.nextDouble();
             if(roll < 0.1)
-                inv.addItem(Bag.generateBag());
+                inv.addItem(Bag.generateItem());
             else if(roll < 0.3)
                 inv.addItem(Equippable.generateItem());
             else if(roll < 0.5)
@@ -60,6 +60,9 @@ public class Chest implements GameObject
     }
 
     public static Chest convertMemento(Element element){
+        Boolean isRandom = Boolean.valueOf(element.getAttribute("random"));
+        if (isRandom != null && isRandom)
+            return new Chest(generateLoot());
         Element inventoryElem = (Element)element.getElementsByTagName("inventory").item(0);
         Inventory inventory = Inventory.convertMemento(inventoryElem);
         return new Chest(inventory);

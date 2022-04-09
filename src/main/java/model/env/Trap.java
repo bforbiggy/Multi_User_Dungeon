@@ -15,10 +15,10 @@ public class Trap implements GameObject
     private int attack;
 
     public Trap(){
-        this.attack = randy.nextInt(10-1)+1;
+        this(randy.nextInt(10-1)+1);
     }
     public Trap(int attackVal) {
-        this.attack = attackVal;
+        this(attackVal, false, false);
     }
     private Trap(int attackVal, boolean detected, boolean disabled) {
         this.attack = attackVal;
@@ -84,6 +84,9 @@ public class Trap implements GameObject
     }
 
     public static Trap convertMemento(Element element){
+        Boolean isRandom = Boolean.valueOf(element.getAttribute("random"));
+        if (isRandom != null && isRandom)
+            return new Trap();
         int attack = Integer.parseInt(element.getAttribute("attack"));
         boolean detected = Boolean.parseBoolean(element.getAttribute("detected"));
         boolean disabled = Boolean.parseBoolean(element.getAttribute("disabled"));

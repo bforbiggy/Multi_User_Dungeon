@@ -85,6 +85,9 @@ public class Consumable extends Item implements PlayerTurnEndListener
     }
 
     public static Consumable convertMemento(Element element) {
+        Boolean isRandom = Boolean.valueOf(element.getAttribute("random"));
+        if (isRandom != null && isRandom)
+            return generateItem();
         String name = element.getAttribute("name");
         String description = element.getAttribute("description");
         int value = Integer.parseInt(element.getAttribute("value"));

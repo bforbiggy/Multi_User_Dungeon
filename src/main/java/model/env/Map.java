@@ -7,6 +7,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import model.Originator;
 import model.entities.*;
+import util.MapGenerator;
 
 public class Map implements Originator {
     public Room currRoom;
@@ -60,6 +61,10 @@ public class Map implements Originator {
     }
 
     public static Map convertMemento(Element memento) {
+        Boolean isRandom = Boolean.valueOf(memento.getAttribute("random"));
+        if (isRandom != null && isRandom)
+            return MapGenerator.generateMap();
+
         Map map = new Map();
         ArrayList<Room> rooms = map.rooms;
         ArrayList<Exit> exits = new ArrayList<>();

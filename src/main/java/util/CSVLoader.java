@@ -51,7 +51,7 @@ public class CSVLoader {
         // Bag conversion
         else if (tokens[0].startsWith("B")) {
             if (tokens.length == 1)
-                return Bag.generateBag();
+                return Bag.generateItem();
             int capacity = parseInt(tokens[4]);
             return new Bag(tokens[1], tokens[2], parseInt(tokens[3]), capacity);
         }

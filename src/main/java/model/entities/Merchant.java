@@ -66,7 +66,7 @@ public class Merchant extends Entity{
             double roll = randy.nextDouble();
             Item item = null;
             if(roll < 0.2)
-                item = Bag.generateBag();
+                item = Bag.generateItem();
             else if(roll < 0.7)
                 item = Equippable.generateItem();
             else
@@ -96,6 +96,9 @@ public class Merchant extends Entity{
     }
 
     public static Merchant convertMemento(Element element){
+        Boolean isRandom = Boolean.valueOf(element.getAttribute("random"));
+        if(isRandom != null && isRandom)
+            return generateMerchant();
         String name = element.getAttribute("name");
         String description = element.getAttribute("description");
         Stats stats = Stats.convertMemento((Element)element.getElementsByTagName("name").item(0));

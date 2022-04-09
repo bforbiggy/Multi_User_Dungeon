@@ -65,6 +65,9 @@ public class Item implements Originator
         else if (element.getAttribute("type").equalsIgnoreCase(Equippable.class.getSimpleName()))
             return Equippable.convertMemento(element);
         else{
+            Boolean isRandom = Boolean.valueOf(element.getAttribute("random"));
+            if (isRandom != null && isRandom)
+                return generateItem();
             String name = element.getAttribute("name");
             String description = element.getAttribute("description");
             int value = Integer.parseInt(element.getAttribute("value"));

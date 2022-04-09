@@ -77,7 +77,7 @@ public class EndlessGame extends Game {
         exit.connectRoom(orgExit.getCurRoom());
         exit.setID(orgExit.getId());
 
-        // Generate room contents and shrine for roughly 1-in-10 rooms
+        // Generate room contents (with shrines appearing 1/10 rooms)
         if(randy.nextInt(10) == 0){
             int x = randy.nextInt(room.getWidth()-2)+1;
             int y = randy.nextInt(room.getHeight()-2)+1;

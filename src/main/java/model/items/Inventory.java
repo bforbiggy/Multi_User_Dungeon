@@ -232,7 +232,7 @@ public class Inventory implements Originator, Iterable<Bag> {
         return element;
     }
 
-    // TODO: TEST INVENTORY MEMENTO CONVESION
+    // TODO: TEST INVENTORY MEMENTO CONVERSION
     public static Inventory convertMemento(Element element) {
         // Create inventory with initial gold and capacity values
         Inventory inventory = new Inventory(Integer.parseInt(element.getAttribute("capacity")));

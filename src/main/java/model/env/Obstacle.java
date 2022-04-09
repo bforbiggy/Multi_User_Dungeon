@@ -4,40 +4,25 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import model.GameObject;
 
-public class Obstacle implements GameObject
-{
-    private String name;
+public class Obstacle implements GameObject {
     private String representation;
 
-    public Obstacle()
-    {
-        this.name = "obstacle";
+    public Obstacle() {
         this.representation = "@";
     }
 
-    public Obstacle(String name, String representation)
-    {
-        this.name = name;
-        this.representation = representation;
-    }
-
     @Override
-    public Element createMemento(Document doc){
+    public Element createMemento(Document doc) {
         Element obstacle = doc.createElement("obstacle");
-        obstacle.setAttribute("name", name);
-        obstacle.setAttribute("representation", representation);
         return obstacle;
     }
 
-    public static Obstacle convertMemento(Element element){
-        String name = element.getAttribute("name");
-        String representation = element.getAttribute("representation");
-        return new Obstacle(name, representation);
+    public static Obstacle convertMemento(Element element) {
+        return new Obstacle();
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return representation;
     }
 }

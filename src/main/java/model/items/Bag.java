@@ -122,7 +122,7 @@ public class Bag extends Item implements Iterable<Item>
         return items.iterator();
     }
 
-    public static Bag generateBag()
+    public static Bag generateItem()
     {
         int capacity = randy.nextInt(8-3)+3;
 
@@ -146,6 +146,9 @@ public class Bag extends Item implements Iterable<Item>
     }
 
     public static Bag convertMemento(Element element){
+        Boolean isRandom = Boolean.valueOf(element.getAttribute("random"));
+        if (isRandom != null && isRandom)
+            return generateItem();
         String name = element.getAttribute("name");
         String description = element.getAttribute("description");
         int value = Integer.parseInt(element.getAttribute("value"));

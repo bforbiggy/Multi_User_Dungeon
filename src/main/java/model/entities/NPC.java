@@ -99,7 +99,7 @@ public class NPC extends Entity implements DayCycleListener, PlayerTurnEndListen
             // Decides what item to create
             double roll = randy.nextDouble();
             if (roll < 0.1)
-                inv.addItem(Bag.generateBag());
+                inv.addItem(Bag.generateItem());
             else if (roll < 0.6)
                 inv.addItem(Equippable.generateItem());
             else if (roll < 0.8)
@@ -140,6 +140,9 @@ public class NPC extends Entity implements DayCycleListener, PlayerTurnEndListen
     }
 
     public static NPC convertMemento(Element element){
+        Boolean isRandom = Boolean.valueOf(element.getAttribute("random"));
+        if (isRandom != null && isRandom)
+            return generateNPC();
         String name = element.getAttribute("name");
         String description = element.getAttribute("description");
         Stats stats = Stats.convertMemento((Element) element.getElementsByTagName("stats").item(0));

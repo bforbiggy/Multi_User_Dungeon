@@ -153,7 +153,7 @@ public class MapGenerator {
      * @param player The player
      * @return An entirely procedurally generated map
      */
-    public static Map generateMap(Player player) {
+    public static Map generateMap() {
         Map map = new Map();
 
         // Create random amount of empty rooms
@@ -169,9 +169,9 @@ public class MapGenerator {
         generateAllRoomConnections(rooms);
 
         // Spawn player into center of map
-        Room start = rooms.get(0);
-        start.setOccupant(new Location(start.getWidth() / 2, start.getHeight() / 2), player);
-        map.currRoom = start;
+        // Room start = rooms.get(0);
+        // start.setOccupant(new Location(start.getWidth() / 2, start.getHeight() / 2), player);
+        // map.currRoom = start;
 
         // Generate contents of each room
         for (Room room : rooms)
