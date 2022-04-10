@@ -44,7 +44,7 @@ public class EndlessGame extends Game {
         room.setOccupant(center, player);
         player.setLocation(center);
 
-        roomChange(map.currRoom);
+        map.roomChange(dayCycle, playerTurnEnd, null, map.currRoom);
     }
 
     private static Room createRoom() {
@@ -152,7 +152,7 @@ public class EndlessGame extends Game {
             }
 
             // Move player to new room
-            roomChange(exit.getOtherRoom());
+            map.roomChange(dayCycle, playerTurnEnd, exit.getCurRoom(), exit.getOtherRoom());
             map.entityUseExit(player, exit);
 
             // Respawn dead enemies in all rooms

@@ -7,6 +7,8 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import model.Originator;
 import model.entities.*;
+import model.events.DayCycle;
+import model.events.PlayerTurnEnd;
 import util.MapGenerator;
 
 public class Map implements Originator {
@@ -15,13 +17,14 @@ public class Map implements Originator {
 
     /**
      * Upon an entity reaching the exit, perform room change operations.
-     * 
-     * This includes moving the entity to the exit in the other room, as well as updating the current room the player is in if applicable.
+     * This moves the entity to the exit in the other room, and updating current room if applicable.
+     * (THIS DOES NOT UPDATE LISTENERS)
      * 
      * @param entity The entity entering the exit
      * @param exit the exit being used
      */
     public void entityUseExit(Entity entity, Exit exit) {
+        // Move entity to new room
         Room prevRoom = exit.getCurRoom();
         Room nextRoom = exit.getOtherRoom();
         Tile nextTile = nextRoom.findExit(exit.getId());
@@ -29,8 +32,43 @@ public class Map implements Originator {
         prevRoom.setOccupant(entity.getLocation(), null);
         nextRoom.setOccupant(nextTile.getLocation(), entity);
 
-        if (entity instanceof Player)
+        // Update "current" room when player moves to new room
+        if (entity instanceof Player && !entity.isDead()) {
             currRoom = nextRoom;
+        }
+    }
+
+    /**
+     * Performs appropriate room change operations involving npc subscriptions to events.
+     * @param dayCycle dayCycle event
+     * @param playerTurnEnd playerTurnEnd event
+     * @param oldRoom old room
+     * @param newRoom new room
+     */
+    public void roomChange(DayCycle dayCycle, PlayerTurnEnd playerTurnEnd, Room oldRoom,
+            Room newRoom) {
+        // Perform event operations
+        dayCycle.removeAllListeners();
+
+        // Remove old room & its npcs from appropriate events
+        if(oldRoom != null){
+            playerTurnEnd.removeListener(oldRoom);
+            for (Entity target : oldRoom.getEntities())
+                if (target instanceof NPC npc)
+                    playerTurnEnd.removeListener(npc);
+        }
+        
+
+        // Add new room and its npcs to appropriate events
+        if(newRoom != null){
+            playerTurnEnd.addListener(newRoom);
+            for (Entity target : newRoom.getEntities()) {
+                if (target instanceof NPC npc && !npc.isDead()) {
+                    dayCycle.addListener(npc);
+                    playerTurnEnd.addListener(npc);
+                }
+            }
+        }
     }
 
     /**

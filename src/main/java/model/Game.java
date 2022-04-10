@@ -42,7 +42,7 @@ public class Game implements PlayerTurnEndListener, Originator {
         playerTurnEnd = new PlayerTurnEnd(this);
         playerTurnEnd.addListener(this);
 
-        roomChange(map.currRoom);
+        map.roomChange(dayCycle, playerTurnEnd, null, map.currRoom);
     }
 
     public void onPlayerTurnEnd(PlayerTurnEnd playerTurnEnd) {
@@ -51,6 +51,7 @@ public class Game implements PlayerTurnEndListener, Originator {
             StatTracker.getTracker().addValue(TrackedStat.GAMES_PLAYED, 1);
             StatTracker.getTracker().addValue(TrackedStat.LIVES_LOST, 1);
 
+            //TODO: Don't do anything to player, just leave the body dead as is
             // Convert player into a corpse
             NPC corpse = new NPC(player.getName(), player.getDescription(), new Stats(0, 0, 0),
                     true, new Inventory(1));
@@ -73,30 +74,6 @@ public class Game implements PlayerTurnEndListener, Originator {
     }
 
     /**
-     * Performs the necessary room changing operations. This updates npc subscriptions to the day/night cycle/. The room monitoring player movements is also changed.
-     * 
-     * @param newRoom
-     */
-    protected void roomChange(Room newRoom) {
-        dayCycle.removeAllListeners();
-
-        // Remove old room & its npcs from appropriate events
-        playerTurnEnd.removeListener(map.currRoom);
-        for (Entity entity : map.currRoom.getEntities())
-            if (entity instanceof NPC npc)
-                playerTurnEnd.removeListener(npc);
-
-        // Add new room and its npcs to appropriate events
-        playerTurnEnd.addListener(newRoom);
-        for (Entity entity : newRoom.getEntities()) {
-            if (entity instanceof NPC npc) {
-                dayCycle.addListener(npc);
-                playerTurnEnd.addListener(npc);
-            }
-        }
-    }
-
-    /**
      * Attempts to use a nearby exit.
      * 
      * @param x x location of exit
@@ -107,7 +84,7 @@ public class Game implements PlayerTurnEndListener, Originator {
         Room room = map.currRoom;
         Tile tile = room.getTileAtLocation(new Location(x, y));
         if (tile != null && tile.content instanceof Exit exit) {
-            roomChange(exit.getOtherRoom());
+            map.roomChange(dayCycle, playerTurnEnd, exit.getCurRoom(), exit.getOtherRoom());
             map.entityUseExit(player, exit);
             return true;
         }
@@ -323,7 +300,7 @@ public class Game implements PlayerTurnEndListener, Originator {
         dayCycle.reset();
         playerTurnEnd = new PlayerTurnEnd(this);
         playerTurnEnd.addListener(this);
-        roomChange(map.currRoom);
+        map.roomChange(dayCycle, playerTurnEnd, null, map.currRoom);
     }
 
 
