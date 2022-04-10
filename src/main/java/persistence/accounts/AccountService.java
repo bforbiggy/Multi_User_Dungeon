@@ -1,10 +1,11 @@
 package persistence.accounts;
 
+import java.io.File;
 import java.util.EnumMap;
 import java.util.HashMap;
 
 import javax.xml.parsers.*;
-
+import javax.xml.transform.stream.StreamResult;
 import org.w3c.dom.*;
 
 import model.tracking.StatTracker;
@@ -76,7 +77,9 @@ public class AccountService {
             document.appendChild(root);
 
             // Writes document to file
-            GameSaver.writeDocument(document, filePath);
+            File file = new File(filePath);
+            StreamResult fileStream = new StreamResult(file);
+            GameSaver.writeDocument(document, fileStream);
         } catch (ParserConfigurationException e) {
             e.printStackTrace();
         }

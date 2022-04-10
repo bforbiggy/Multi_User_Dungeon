@@ -54,8 +54,11 @@ public class Map implements Originator {
     @Override
     public Element createMemento(Document doc) {
         Element map = doc.createElement("map");
-        for (Room room : rooms) {
-            map.appendChild(room.createMemento(doc));
+        for (int i = 0; i < rooms.size(); i++) {
+            Room room = rooms.get(i);
+            Element roomElem = room.createMemento(doc);
+            roomElem.setAttribute("id", Integer.toString(i));
+            map.appendChild(roomElem);
         }
         return map;
     }

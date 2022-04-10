@@ -130,7 +130,8 @@ public class Game implements PlayerTurnEndListener, Originator {
         Tile destTile = currRoom.getTileAtLocation(dest);
         if (player.validateMove(player.getLocation(), destTile)) {
             // Clear previous tile and move player to new tile
-            currRoom.moveEntity(dest, player);
+            currRoom.setOccupant(player.getLocation(), null);
+            currRoom.setOccupant(dest, player);
         }
 
         playerTurnEnd.notifyAllListeners();
@@ -307,7 +308,6 @@ public class Game implements PlayerTurnEndListener, Originator {
         gameElem.appendChild(map.createMemento(doc));
         return gameElem;
     }
-
 
     public void loadMemento(Element element) {
         map = Map.convertMemento((Element) element.getFirstChild());

@@ -49,11 +49,23 @@ public class GameController extends Controller {
         if (tokens[0].equals("CONTROLS")) {
             System.out.println(CONTROLS_STRING);
         }
-        // Save the game
-        else if (tokens[0].equals("SAVE")) {
-            File dest = new File(FileConstants.SAVE_FOLDER_PATH + account.getUsername() + "game." + GameFormat.CSV.name());
-            GameSaver.saveGame(game, dest);
-            System.out.println("Game saved!");
+        // Save the game in specified format
+        else if (tokens[0].equals("SAVE") && tokens.length >= 2) {
+            GameFormat format = GameFormat.valueOf(tokens[1].toUpperCase());
+            if (format != null) {
+                if (format == GameFormat.CSV) {
+                    File dest = new File(FileConstants.SAVE_FOLDER_PATH + account.getUsername() +
+                            "game." + GameFormat.CSV.name());
+                    GameSaver.saveGame(game, dest);
+                }
+                else if(format == GameFormat.XML){
+                    File dest = new File(FileConstants.SAVE_FOLDER_PATH + "test.xml");
+                    GameSaver.saveGame(game, dest);
+                }
+
+                System.out.println("Game saved!");
+            }
+
         }
         // Use exit
         else if (tokens[0].equals("EXIT")) {
@@ -161,9 +173,10 @@ public class GameController extends Controller {
             // Game has ended
             if (game.getGameState() != Game.GameState.ONGOING) {
                 // Delete the saves (no need to update account stats, menuController autosaves)
-                FilenameFilter filter = (file, name) -> name.startsWith(account.getUsername()) && name.contains("game");
+                FilenameFilter filter = (file, name) -> name.startsWith(account.getUsername()) &&
+                        name.contains("game");
                 File saveFolder = new File(FileConstants.SAVE_FOLDER_PATH);
-                for(File saveFile : saveFolder.listFiles(filter)){
+                for (File saveFile : saveFolder.listFiles(filter)) {
                     saveFile.delete();
                 }
                 return null;

@@ -34,13 +34,17 @@ public class Tile implements Originator{
         tileElem.setAttribute("y", Integer.toString(location.getY()));
         if(content != null){
             Element contentNode = doc.createElement("content");
-            contentNode.appendChild(content.createMemento(doc));
+
+            Element contentData = content.createMemento(doc);
+            contentNode.appendChild(contentData);
             tileElem.appendChild(contentNode);
         }
         if(occupant != null){
-            Element occupantNode = doc.createElement("occupant");
-            occupantNode.appendChild(occupant.createMemento(doc));
-            tileElem.appendChild(occupantNode);
+            Element containerNode = doc.createElement("occupant");
+
+            Element occupantData = occupant.createMemento(doc);
+            containerNode.appendChild(occupantData);
+            tileElem.appendChild(containerNode);
         }
         return tileElem;
     }

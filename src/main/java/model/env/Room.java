@@ -14,7 +14,7 @@ import model.events.PlayerTurnEnd;
 import model.events.PlayerTurnEndListener;
 
 public class Room implements PlayerTurnEndListener, Originator {
-    //private static final String[] ROOM_TYPES = {"library", "closet", "hall", "bedroom", "cave", "ruin"};
+    // private static final String[] ROOM_TYPES = {"library", "closet", "hall", "bedroom", "cave", "ruin"};
     private EnumMap<Direction, Tile> neighbors = new EnumMap<>(Direction.class);
     private HashSet<Entity> entities = new HashSet<>();
 
@@ -56,15 +56,15 @@ public class Room implements PlayerTurnEndListener, Originator {
             entities.add(entity);
         }
 
-        if(content instanceof Exit exit){
+        if (content instanceof Exit exit) {
             exit.setCurRoom(this);
             neighbors.put(Direction.locToDirection(location, width, height), tile);
         }
     }
 
     /**
-     * Given a location, this sets the corresponding tile's occupant to the object. If the occupant is an entity, this will also update the entity's
-     * location
+     * Given a location, this sets the corresponding tile's occupant to the object. 
+     * If the occupant is an entity, this will also update the entity's location
      * 
      * @param location the location of the tile
      * @param occupant the object to set as the tile's occupant
@@ -80,39 +80,25 @@ public class Room implements PlayerTurnEndListener, Originator {
     }
 
     /**
-     * Given a location, this sets an obj to the corresponding tile this will override whatever was previously on the tile.
+     * Given a location, this sets an obj to the corresponding tile. 
+     * This will override whatever was previously on the tile.
      * 
      * @param location location to add obj to
      * @param obj obj to add to tile
      */
     public void forceSetData(Location location, GameObject obj) {
-        if(obj instanceof Obstacle){
+        if (obj instanceof Obstacle) {
             setOccupant(location, obj);
         }
-        else if(obj instanceof Entity entity){
-            if(entity.isDead() || entity instanceof Merchant)
+        else if (obj instanceof Entity entity) {
+            if (entity.isDead() || entity instanceof Merchant)
                 setContent(location, obj);
             else
                 setOccupant(location, obj);
         }
-        else{
+        else {
             setContent(location, obj);
         }
-    }
-
-    /**
-     * Given a location, this will move the entity to the destination. This will update the entity's location and clear previous tile's content/occupant.
-     * 
-     * @param dest destination of the entity
-     * @param entity entity to move
-     */
-    public void moveEntity(Location dest, Entity entity) {
-        Tile old = getTileAtLocation(entity.getLocation());
-        old.occupant = null;
-
-        Tile tile = getTileAtLocation(dest);
-        tile.occupant = entity;
-        entity.setLocation(dest);
     }
 
     /**
@@ -172,11 +158,12 @@ public class Room implements PlayerTurnEndListener, Originator {
 
     /**
      * Returns true if there are no LIVING HOSTILE entities in room.
+     * 
      * @return whether or not there isn't a living hostile entity
      */
     public boolean isCleared() {
-        for(Entity entity : entities)
-            if(entity instanceof NPC npc && !npc.isDead())
+        for (Entity entity : entities)
+            if (entity instanceof NPC npc && !npc.isDead())
                 return false;
         return true;
     }
@@ -263,13 +250,14 @@ public class Room implements PlayerTurnEndListener, Originator {
             else
                 npcString = "There is no monster left alive in this room. ";
         }
-        else{
+        else {
             npcString = "With " + dead.size() + " monsters dead, you see the following: ";
             npcString += String.join(", ", "a " + alive);
         }
-        
 
-        String output = String.format("A %s %s room has %s exit(s). ", size, length, neighbors.keySet().size());
+
+        String output = String.format("A %s %s room has %s exit(s). ", size, length, neighbors
+                .keySet().size());
         if (chestCount != 0)
             output += "There are " + chestCount + " chest(s). ";
         output += npcString;
@@ -279,7 +267,7 @@ public class Room implements PlayerTurnEndListener, Originator {
     }
 
     @Override
-    public Element createMemento(Document doc){
+    public Element createMemento(Document doc) {
         Element roomElem = doc.createElement("room");
         roomElem.setAttribute("type", Integer.toString(type));
         roomElem.setAttribute("height", Integer.toString(height));
@@ -296,7 +284,7 @@ public class Room implements PlayerTurnEndListener, Originator {
         return roomElem;
     }
 
-    public static Room convertMemento(Element element){
+    public static Room convertMemento(Element element) {
         // Creates template room
         int type = Integer.parseInt(element.getAttribute("type"));
         int width = Integer.parseInt(element.getAttribute("width"));
@@ -308,17 +296,18 @@ public class Room implements PlayerTurnEndListener, Originator {
         for (int i = 0; i < roomNodes.getLength(); i++) {
             Node tileNode = roomNodes.item(i);
             if (tileNode instanceof Element tileElem) {
-                Location loc = new Location(Integer.parseInt(tileElem.getAttribute("x")), Integer.parseInt(tileElem.getAttribute("y")));
+                Location loc = new Location(Integer.parseInt(tileElem.getAttribute("x")), Integer
+                        .parseInt(tileElem.getAttribute("y")));
                 Tile tile = room.getTileAtLocation(loc);
 
                 // Load data into tile
                 tile.loadMemento(tileElem);
 
                 // Set tile data using room methods
-                if(tile.occupant != null){
+                if (tile.occupant != null) {
                     room.setOccupant(loc, tile.occupant);
                 }
-                if(tile.content != null){
+                if (tile.content != null) {
                     room.setContent(loc, tile.content);
                 }
             }

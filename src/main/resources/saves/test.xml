@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<game>
+    <map>
+        <room desc="" height="6" id="0" type="1" width="3">
+            <tile x="0" y="0"/>
+            <tile x="1" y="0">
+                <content>
+                    <exit id="0"/>
+                </content>
+            </tile>
+            <tile x="2" y="0"/>
+            <tile x="0" y="1"/>
+            <tile x="1" y="1"/>
+            <tile x="2" y="1"/>
+            <tile x="0" y="2">
+                <content>
+                    <exit id="2"/>
+                </content>
+            </tile>
+            <tile x="1" y="2"/>
+            <tile x="2" y="2">
+                <content>
+                    <exit id="3"/>
+                </content>
+            </tile>
+            <tile x="0" y="3"/>
+            <tile x="1" y="3"/>
+            <tile x="2" y="3"/>
+            <tile x="0" y="4"/>
+            <tile x="1" y="4"/>
+            <tile x="2" y="4"/>
+            <tile x="0" y="5"/>
+            <tile x="1" y="5">
+                <content>
+                    <exit id="1"/>
+                </content>
+            </tile>
+            <tile x="2" y="5"/>
+        </room>
+        <room desc="" height="4" id="1" type="0" width="8">
+            <tile x="0" y="0"/>
+            <tile x="1" y="0"/>
+            <tile x="2" y="0"/>
+            <tile x="3" y="0"/>
+            <tile x="4" y="0">
+                <content>
+                    <trap attack="7" detected="false" disabled="false"/>
+                </content>
+            </tile>
+            <tile x="5" y="0">
+                <content>
+                    <exit id="4"/>
+                </content>
+            </tile>
+            <tile x="6" y="0">
+                <occupant>
+                    <obstacle/>
+                </occupant>
+            </tile>
+            <tile x="7" y="0"/>
+            <tile x="0" y="1">
+                <content>
+                    <exit id="3"/>
+                </content>
+                <occupant>
+                    <entity description="awughwuir" name="ad" type="player">
+                        <stats attack="10" defense="0" health="100"/>
+                        <inventory capacity="6" gold="0">
+                            <item capacity="6" description="This bag is so poggers omg!!!!! yassss!!!" name="Bag of poggers" type="bag" value="5"/>
+                            <equipment/>
+                        </inventory>
+                    </entity>
+                </occupant>
+            </tile>
+            <tile x="1" y="1"/>
+            <tile x="2" y="1">
+                <content>
+                    <trap attack="4" detected="false" disabled="false"/>
+                </content>
+            </tile>
+            <tile x="3" y="1"/>
+            <tile x="4" y="1">
+                <occupant>
+                    <obstacle/>
+                </occupant>
+            </tile>
+            <tile x="5" y="1"/>
+            <tile x="6" y="1">
+                <occupant>
+                    <entity description="I don't know about you but this frog sure is heterosexual" diurnal="true" name="heterosexual frog" type="npc">
+                        <stats attack="6" defense="7" health="149"/>
+                        <inventory capacity="1" gold="36">
+                            <item capacity="2147483647" description="ooooh ohhhhh bag is infinite oooh so infinite wow" name="Infinite Bag" type="bag" value="50"/>
+                            <equipment/>
+                        </inventory>
+                    </entity>
+                </occupant>
+            </tile>
+            <tile x="7" y="1">
+                <content>
+                    <exit id="7"/>
+                </content>
+            </tile>
+            <tile x="0" y="2"/>
+            <tile x="1" y="2">
+                <occupant>
+                    <entity description="I don't know about you but this unicorn sure is calm" diurnal="true" name="calm unicorn" type="npc">
+                        <stats attack="9" defense="1" health="133"/>
+                        <inventory capacity="1" gold="72">
+                            <item capacity="2147483647" description="ooooh ohhhhh bag is infinite oooh so infinite wow" name="Infinite Bag" type="bag" value="50">
+                                <item description="So you mean to tell me this bones can smiling? Ain't no way!" name="swaggalicious bones of smiling" type="item" value="10"/>
+                                <item description="I sure do hope this ARMOR of smiling doesn't debuff me like crazy!" name="epic ARMOR of smiling" type="equippable" value="32">
+                                    <stats attack="3" defense="3" health="8"/>
+                                </item>
+                            </item>
+                            <equipment/>
+                        </inventory>
+                    </entity>
+                </occupant>
+            </tile>
+            <tile x="2" y="2">
+                <occupant>
+                    <obstacle/>
+                </occupant>
+            </tile>
+            <tile x="3" y="2">
+                <content>
+                    <trap attack="3" detected="false" disabled="false"/>
+                </content>
+            </tile>
+            <tile x="4" y="2"/>
+            <tile x="5" y="2"/>
+            <tile x="6" y="2"/>
+            <tile x="7" y="2">
+                <content>
+                    <trap attack="5" detected="false" disabled="false"/>
+                </content>
+            </tile>
+            <tile x="0" y="3">
+                <content>
+                    <trap attack="9" detected="false" disabled="false"/>
+                </content>
+            </tile>
+            <tile x="1" y="3"/>
+            <tile x="2" y="3">
+                <content>
+                    <exit id="5"/>
+                </content>
+            </tile>
+            <tile x="3" y="3"/>
+            <tile x="4" y="3">
+                <content>
+                    <chest>
+                        <inventory capacity="1" gold="0">
+                            <item capacity="2147483647" description="ooooh ohhhhh bag is infinite oooh so infinite wow" name="Infinite Bag" type="bag" value="50">
+                                <item description="I sure do hope this ARMOR of smiling doesn't debuff me like crazy!" name="zany ARMOR of smiling" type="equippable" value="30">
+                                    <stats attack="3" defense="2" health="6"/>
+                                </item>
+                            </item>
+                            <equipment/>
+                        </inventory>
+                    </chest>
+                </content>
+            </tile>
+            <tile x="5" y="3"/>
+            <tile x="6" y="3"/>
+            <tile x="7" y="3"/>
+        </room>
+    </map>
+</game>
